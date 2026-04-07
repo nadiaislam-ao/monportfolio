@@ -243,6 +243,7 @@
   }
 
   /* ── TOPBAR ── */
+/* ── TOPBAR ── */
   .proj-page-topbar {
     flex-shrink: 0;
     display: flex; align-items: center; justify-content: space-between;
@@ -252,17 +253,27 @@
     border-bottom: 1px solid rgba(196,202,210,0.07);
     gap: 1rem;
     z-index: 10;
+    position: relative;
   }
 
   .proj-page-back {
     display: inline-flex; align-items: center; gap: .6rem;
-    font-family: var(--mono); font-size: .6rem; letter-spacing: .2em; text-transform: uppercase;
-    color: var(--silver-mid); background: transparent;
-    border: 1px solid var(--silver-dim); padding: .45rem .9rem;
+    font-family: var(--mono); font-size: .65rem; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--paper); /* Rendu plus lumineux */
+    background: rgba(196,202,210,0.05); /* Fond ajouté pour le démarquer */
+    border: 1px solid var(--silver-dim); 
+    padding: .5rem 1rem;
     cursor: crosshair; transition: all .2s;
     border-radius: 0 1rem 0 1rem;
   }
-  .proj-page-back:hover { border-color: var(--silver); color: var(--silver-bright); border-radius: 1rem 0 1rem 0; }
+  .proj-page-back:hover { 
+    background: var(--rust); /* Surlignage orange au survol */
+    border-color: var(--rust); 
+    color: var(--paper); 
+    border-radius: 1rem 0 1rem 0; 
+  }
+  .proj-page-back svg { transition: transform 0.2s; }
+  .proj-page-back:hover svg { transform: translateX(-3px); } /* Animation de la flèche */
 
   .proj-page-topbar-center {
     display: flex; align-items: center; gap: .8rem;
