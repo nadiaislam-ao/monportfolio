@@ -1,0 +1,3533 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Léo Proudhom — IT Project Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<style>
+  :root {
+    --ink:      #0d0d0b;
+    --paper:    #f0ebe0;
+    --rust:     #b84a2e;
+    --steel:    #5c6b7a;
+    --concrete: #c9c0b0;
+    --wire:     #1e2820;
+
+    /* ── SILVER METAL PALETTE ──────────────────────────────────────── */
+    --silver-bright: #eef0f3;   /* éclat blanc-argent, presque blanc    */
+    --silver:        #c4cad2;   /* argent principal, teinte froide       */
+    --silver-mid:    #8a9299;   /* argent moyen, subtil sur fond sombre  */
+    --silver-dim:    #4e5660;   /* argent sombre, pour bordures fines    */
+    /* Dégradé métallique réutilisable via background */
+    --silver-gradient: linear-gradient(
+      105deg,
+      #eef0f3 0%,
+      #c4cad2 35%,
+      #95a0a8 60%,
+      #c4cad2 80%,
+      #eef0f3 100%
+    );
+
+    --mono:    'Space Mono', monospace;
+    --display: 'Bebas Neue', sans-serif;
+    --serif:   'DM Serif Display', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--mono);
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.6;
+  }
+
+  /* ── METALLIC SHIMMER ANIMATION ── */
+  @keyframes silver-shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position:  200% center; }
+  }
+
+  @keyframes morph {
+    0%   { d: path("M200,100 C300,50 400,150 380,280 C360,400 200,450 100,380 C0,310 20,180 80,120 C120,70 150,130 200,100Z"); }
+    50%  { d: path("M220,80 C340,30 420,140 400,300 C380,420 220,460 110,390 C10,330 10,160 80,100 C130,50 160,110 220,80Z"); }
+    100% { d: path("M190,110 C310,40 410,160 390,290 C370,420 190,440 90,370 C-10,300 30,190 90,130 C130,80 140,150 190,110Z"); }
+  }
+
+  @keyframes ticker {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar       { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--ink); }
+  ::-webkit-scrollbar-thumb {
+    background: var(--silver-mid);
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--silver); }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 2.5rem;
+    border-bottom: 1px solid rgba(196, 202, 210, 0.09);
+    backdrop-filter: blur(14px);
+    background: rgba(13, 13, 11, 0.88);
+  }
+
+  .nav-logo {
+    font-family: var(--display);
+    font-size: 1.5rem;
+    letter-spacing: 0.12em;
+    color: var(--paper);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--rust); }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--silver-mid);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--silver-bright); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 8rem 2.5rem 4rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-tag {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: linear-gradient(90deg, var(--rust), var(--silver-mid));
+  }
+
+  .hero-name {
+    font-family: var(--display);
+    font-size: clamp(4rem, 10vw, 9rem);
+    line-height: 0.88;
+    letter-spacing: -0.01em;
+    color: var(--paper);
+  }
+  .hero-name .accent { color: var(--rust); }
+
+  .hero-role {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    color: var(--concrete);
+    margin-top: 1.5rem;
+    max-width: 380px;
+    line-height: 1.6;
+  }
+
+  .hero-cta {
+    margin-top: 3rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.9rem 1.8rem;
+    border: 1px solid;
+    transition: all 0.25s;
+    display: inline-block;
+    cursor: crosshair;
+  }
+  .btn-primary {
+    background: var(--rust);
+    border-color: var(--rust);
+    color: var(--paper);
+    border-radius: 0 2rem 0 2rem;
+  }
+  .btn-primary:hover {
+    background: transparent;
+    color: var(--rust);
+    border-radius: 2rem 0 2rem 0;
+  }
+  .btn-outline {
+    background: transparent;
+    border-color: var(--silver-dim);
+    color: var(--silver);
+    border-radius: 2rem 0 2rem 0;
+  }
+  .btn-outline:hover {
+    border-color: var(--silver-bright);
+    color: var(--silver-bright);
+    border-radius: 0 2rem 0 2rem;
+  }
+
+  /* ── HERO RIGHT ── */
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-blob {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-blob svg {
+    width: 90%;
+    height: 90%;
+    opacity: 0.12;
+    animation: morph 12s ease-in-out infinite alternate;
+  }
+
+  .hero-grid-lines {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(196, 202, 210, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(196, 202, 210, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Reflet argenté diagonal en hero-right */
+  .hero-right::after {
+    content: '';
+    position: absolute;
+    top: 15%;
+    right: 8%;
+    width: 1px;
+    height: 60%;
+    background: linear-gradient(180deg, transparent 0%, var(--silver-dim) 30%, var(--silver-mid) 50%, var(--silver-dim) 70%, transparent 100%);
+    opacity: 0.4;
+  }
+
+  .hero-stat-block {
+    position: absolute;
+    bottom: 4rem;
+    right: 3rem;
+    text-align: right;
+  }
+  .hero-stat { margin-bottom: 1.5rem; }
+
+  .hero-stat .num {
+    font-family: var(--display);
+    font-size: 3rem;
+    line-height: 1;
+    /* argent métallique animé */
+    background: var(--silver-gradient);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: silver-shimmer 4s linear infinite;
+  }
+  .hero-stat .label {
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+    margin-top: 0.2rem;
+  }
+
+  .hero-diagonal {
+    position: absolute;
+    bottom: 0; left: -1px; right: -1px;
+    height: 120px;
+    background: var(--ink);
+    clip-path: polygon(0 100%, 100% 100%, 100% 0);
+    z-index: 3;
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    padding: 6rem 2.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+  }
+
+  .section-num {
+    font-family: var(--display);
+    font-size: 5rem;
+    color: var(--silver-mid);
+    opacity: 0.2;
+    line-height: 1;
+  }
+
+  .section-title {
+    font-family: var(--display);
+    font-size: clamp(2rem, 5vw, 4rem);
+    letter-spacing: 0.05em;
+    line-height: 1;
+    color: var(--paper);
+  }
+
+  /* Trait argent sous le titre de section */
+  .section-title::after {
+    content: '';
+    display: block;
+    width: 2.5rem;
+    height: 1px;
+    margin-top: 0.6rem;
+    background: linear-gradient(90deg, var(--silver), transparent);
+    opacity: 0.5;
+  }
+
+  /* ── ABOUT ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .about-text p {
+    font-size: 0.85rem;
+    line-height: 1.9;
+    color: var(--concrete);
+    margin-bottom: 1.2rem;
+  }
+  .about-text p strong {
+    color: var(--silver-bright);
+    font-weight: 700;
+  }
+
+  .about-aside {
+    border-left: 1px solid var(--silver-dim);
+    padding-left: 2rem;
+  }
+
+  /* ── PHOTO DE PROFIL ── */
+  /*
+   * Remplacez src="./assets/photo-profil.jpg" par le chemin de votre photo.
+   * Format recommandé : carré, 400×400px minimum, fond neutre ou studio.
+   */
+  .profile-photo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2.2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(196, 202, 210, 0.1);
+  }
+
+  .profile-photo {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: top center;
+    filter: grayscale(15%) contrast(1.05);
+    /* anneau argenté */
+    border: 1.5px solid var(--silver-mid);
+    box-shadow:
+      0 0 0 3px rgba(196, 202, 210, 0.07),
+      0 2px 12px rgba(0, 0, 0, 0.45);
+    flex-shrink: 0;
+    transition: filter 0.4s, border-color 0.4s;
+  }
+  .profile-photo:hover {
+    filter: grayscale(0%) contrast(1.05);
+    border-color: var(--silver);
+  }
+
+  /* Silhouette SVG affichée si la photo est absente */
+  .profile-photo-fallback {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    border: 1.5px solid var(--silver-dim);
+    background: rgba(196, 202, 210, 0.05);
+    flex-shrink: 0;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+    color: var(--silver-dim);
+  }
+
+  .profile-photo-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .profile-photo-name {
+    font-family: var(--display);
+    font-size: 1rem;
+    letter-spacing: 0.07em;
+    color: var(--paper);
+    line-height: 1;
+  }
+  .profile-photo-title {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--silver-mid);
+  }
+
+  /* ── CHIPS ── */
+  .chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .chip {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--silver-dim);
+    color: var(--silver-mid);
+    border-radius: 0 1rem 0 1rem;
+    transition: all 0.2s;
+  }
+  .chip:hover, .chip.active {
+    border-color: var(--silver);
+    color: var(--silver-bright);
+    border-radius: 1rem 0 1rem 0;
+    background: rgba(196, 202, 210, 0.05);
+  }
+
+  .aside-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--silver-mid);
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .aside-label::before {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 1px;
+    background: var(--silver-mid);
+    opacity: 0.5;
+  }
+
+  /* ── EXPERIENCE ── */
+  .exp-list { display: flex; flex-direction: column; gap: 0; }
+
+  .exp-item {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 0 2.5rem;
+    padding: 2.5rem 0;
+    border-bottom: 1px solid rgba(196, 202, 210, 0.07);
+    position: relative;
+    transition: background 0.3s;
+    cursor: default;
+  }
+  .exp-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 0;
+    background: rgba(196, 202, 210, 0.03);
+    transition: width 0.4s ease;
+  }
+  .exp-item:hover::before { width: 100%; }
+
+  /* filet argent gauche au hover */
+  .exp-item::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 10%; bottom: 10%;
+    width: 1px;
+    background: var(--silver-mid);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .exp-item:hover::after { opacity: 0.4; }
+
+  .exp-date {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+    padding-top: 0.3rem;
+  }
+
+  .exp-company {
+    font-family: var(--display);
+    font-size: 1.6rem;
+    letter-spacing: 0.05em;
+    color: var(--silver-bright);
+    line-height: 1.1;
+  }
+
+  .exp-role {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--rust);
+    margin: 0.3rem 0 0.7rem;
+  }
+
+  .exp-desc {
+    font-size: 0.75rem;
+    line-height: 1.8;
+    color: var(--concrete);
+    max-width: 600px;
+  }
+
+  /* ── SKILLS ── */
+  .skills-masonry {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(196, 202, 210, 0.07);
+    border: 1px solid rgba(196, 202, 210, 0.07);
+  }
+
+  .skill-cell {
+    background: var(--ink);
+    padding: 2rem 1.8rem;
+    transition: background 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-cell:hover { background: #111210; }
+
+  /* barre argentée au bas au hover */
+  .skill-cell::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1.5px;
+    background: var(--silver-gradient);
+    background-size: 200% auto;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s ease;
+    animation: silver-shimmer 3s linear infinite paused;
+  }
+  .skill-cell:hover::after {
+    transform: scaleX(1);
+    animation-play-state: running;
+  }
+
+  .skill-icon {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .skill-name {
+    font-family: var(--display);
+    font-size: 1.1rem;
+    letter-spacing: 0.06em;
+    color: var(--silver-bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .skill-level {
+    display: flex;
+    gap: 3px;
+    margin-bottom: 0.8rem;
+  }
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1px solid var(--silver-dim);
+    background: transparent;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .dot.filled {
+    background: var(--silver);
+    border-color: var(--silver);
+    box-shadow: 0 0 4px rgba(196, 202, 210, 0.35);
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  .skill-tag {
+    font-size: 0.5rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid rgba(196, 202, 210, 0.15);
+    color: var(--silver-mid);
+    border-radius: 2px;
+  }
+
+  /* ── EDUCATION ── */
+  .edu-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-left: 1px solid var(--silver-dim);
+    padding-left: 2.5rem;
+    margin-left: 1rem;
+    position: relative;
+  }
+
+  .edu-item {
+    padding: 2rem 0;
+    border-bottom: 1px solid rgba(196, 202, 210, 0.07);
+    position: relative;
+  }
+
+  /* point argent sur la timeline */
+  .edu-item::before {
+    content: '';
+    position: absolute;
+    left: -2.5rem;
+    top: 2.4rem;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--silver);
+    box-shadow: 0 0 6px rgba(196, 202, 210, 0.4);
+    transform: translateX(-3px);
+  }
+
+  /* trait horizontal reliant le point au contenu */
+  .edu-item::after {
+    content: '';
+    position: absolute;
+    left: calc(-2.5rem + 7px);
+    top: calc(2.4rem + 3px);
+    width: 1rem;
+    height: 1px;
+    background: var(--silver-dim);
+    opacity: 0.4;
+  }
+
+  .edu-year {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--silver);
+    margin-bottom: 0.5rem;
+  }
+
+  .edu-school {
+    font-family: var(--display);
+    font-size: 1.3rem;
+    letter-spacing: 0.04em;
+    color: var(--paper);
+    line-height: 1.1;
+    margin-bottom: 0.3rem;
+  }
+
+  .edu-degree {
+    font-size: 0.75rem;
+    color: var(--concrete);
+    line-height: 1.5;
+  }
+
+  /* ── CONTACT ── */
+  .contact-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .contact-giant {
+    font-family: var(--display);
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: var(--paper);
+  }
+  .contact-giant span {
+    display: block;
+    /* texte argenté métallique sur la 2e ligne */
+    background: var(--silver-gradient);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: silver-shimmer 5s linear infinite;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 1.2rem 1.4rem;
+    border: 1px solid rgba(196, 202, 210, 0.1);
+    color: var(--concrete);
+    text-decoration: none;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(196, 202, 210, 0.03);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .contact-link:hover::before { transform: translateX(0); }
+  .contact-link:hover {
+    border-color: var(--silver-dim);
+    color: var(--silver-bright);
+  }
+
+  .contact-link-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--silver-dim);
+    border-radius: 50%;
+    font-size: 0.8rem;
+    color: var(--silver);
+    flex-shrink: 0;
+    transition: border-color 0.25s, color 0.25s;
+  }
+  .contact-link:hover .contact-link-icon {
+    border-color: var(--silver);
+    color: var(--silver-bright);
+  }
+
+  .contact-link-info { flex: 1; }
+  .contact-link-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+  .contact-link-value {
+    font-size: 0.8rem;
+    color: inherit;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid rgba(196, 202, 210, 0.07);
+    padding: 2rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  footer p {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+  }
+  footer p span {
+    color: var(--silver-mid);
+  }
+
+  /* ── TERMINAL TICKER ── */
+  .ticker {
+    background: var(--wire);
+    border-top: 1px solid rgba(196, 202, 210, 0.07);
+    border-bottom: 1px solid rgba(196, 202, 210, 0.07);
+    padding: 0.6rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .ticker-inner {
+    display: inline-block;
+    animation: ticker 30s linear infinite;
+  }
+  .ticker-inner span {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--silver-mid);
+    margin: 0 3rem;
+  }
+  .ticker-inner span::before {
+    content: '◆ ';
+    color: var(--silver);
+    opacity: 0.6;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 100%;
+    height: 80px;
+    background: var(--ink);
+    position: relative;
+  }
+  .divider.curve-down {
+    clip-path: ellipse(55% 100% at 50% 0%);
+    background: rgba(196, 202, 210, 0.02);
+    margin: 0 auto;
+    max-width: 100%;
+  }
+
+  /* ── PROJECTS ── */
+  .projects-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .proj-filter-group {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .proj-filter {
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--silver-dim);
+    color: var(--silver-mid);
+    background: transparent;
+    cursor: crosshair;
+    border-radius: 0 1rem 0 1rem;
+    transition: all 0.2s;
+  }
+  .proj-filter:hover {
+    border-color: var(--silver);
+    color: var(--silver-bright);
+    border-radius: 1rem 0 1rem 0;
+  }
+  .proj-filter.active {
+    border-color: var(--rust);
+    color: var(--rust);
+    border-radius: 1rem 0 1rem 0;
+  }
+
+  .proj-status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 0.4rem;
+    vertical-align: middle;
+  }
+  .proj-status-dot.wip    { background: #f0a500; box-shadow: 0 0 6px #f0a50088; }
+  .proj-status-dot.done   { background: #4caf80; box-shadow: 0 0 6px #4caf8088; }
+  .proj-status-dot.paused { background: var(--silver-dim); }
+
+  .proj-reload-btn {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.35rem 1rem;
+    border: 1px solid var(--silver-dim);
+    color: var(--silver-mid);
+    background: transparent;
+    cursor: crosshair;
+    border-radius: 0 1rem 0 1rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .proj-reload-btn:hover {
+    border-color: var(--silver);
+    color: var(--silver-bright);
+  }
+  .proj-reload-btn svg {
+    width: 10px;
+    height: 10px;
+    transition: transform 0.5s ease;
+  }
+  .proj-reload-btn.spinning svg {
+    animation: spin 0.6s linear infinite;
+  }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+
+  .proj-source-badge {
+    font-size: 0.45rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border: 1px solid rgba(196,202,210,0.12);
+    color: var(--silver-dim);
+    border-radius: 2px;
+    margin-bottom: 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .proj-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1px;
+    background: rgba(196,202,210,0.07);
+    border: 1px solid rgba(196,202,210,0.07);
+  }
+
+  .proj-card {
+    background: var(--ink);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.25s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    cursor: pointer;
+  }
+  .proj-card:hover { background: #111210; }
+
+  .proj-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1.5px;
+    background: linear-gradient(90deg, var(--rust), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s ease;
+  }
+  .proj-card:hover::before { transform: scaleX(1); }
+
+  .proj-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .proj-name {
+    font-family: var(--display);
+    font-size: 1.3rem;
+    letter-spacing: 0.04em;
+    color: var(--silver-bright);
+    line-height: 1.1;
+    flex: 1;
+  }
+
+  .proj-type-icon {
+    font-size: 1.1rem;
+    opacity: 0.7;
+  }
+
+  .proj-desc {
+    font-size: 0.72rem;
+    line-height: 1.75;
+    color: var(--concrete);
+    flex: 1;
+  }
+
+  .proj-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(196,202,210,0.07);
+  }
+
+  .proj-tag {
+    font-size: 0.48rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid rgba(196,202,210,0.15);
+    color: var(--silver-mid);
+    border-radius: 2px;
+  }
+  .proj-tag.highlight {
+    border-color: rgba(184,74,46,0.35);
+    color: var(--rust);
+  }
+
+  .proj-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+  }
+
+  .proj-link {
+    color: var(--silver-mid);
+    text-decoration: none;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .proj-link:hover { color: var(--silver-bright); }
+
+  .proj-skeleton {
+    height: 180px;
+    background: linear-gradient(90deg, rgba(196,202,210,0.04) 25%, rgba(196,202,210,0.08) 50%, rgba(196,202,210,0.04) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  }
+  @keyframes skeleton-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .proj-empty {
+    grid-column: 1 / -1;
+    padding: 4rem;
+    text-align: center;
+    color: var(--silver-dim);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border: 1px dashed rgba(196,202,210,0.1);
+  }
+
+  .proj-error-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem 1.2rem;
+    border: 1px solid rgba(184,74,46,0.25);
+    color: var(--rust);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+    background: rgba(184,74,46,0.04);
+  }
+
+  .proj-last-updated {
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+    margin-top: 1.5rem;
+    text-align: right;
+  }
+
+  @media (max-width: 768px) {
+    .proj-grid { grid-template-columns: 1fr; }
+    .projects-toolbar { flex-direction: column; align-items: flex-start; }
+  }
+
+  /* ── PAGINATION ── */
+  .proj-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(196,202,210,0.07);
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .proj-pagination-info {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+  }
+  .proj-pagination-info strong {
+    color: var(--silver-mid);
+  }
+
+  .proj-pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .proj-page-btn {
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    min-width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--silver-dim);
+    color: var(--silver-mid);
+    background: transparent;
+    cursor: crosshair;
+    transition: all 0.2s;
+    padding: 0 0.5rem;
+  }
+  .proj-page-btn:hover:not(:disabled) {
+    border-color: var(--silver);
+    color: var(--silver-bright);
+  }
+  .proj-page-btn.active {
+    border-color: var(--rust);
+    color: var(--rust);
+    background: rgba(184,74,46,0.06);
+  }
+  .proj-page-btn:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+  }
+
+  /* ── PROJECT FULL PAGE ── */
+  .proj-page {
+    position: fixed;
+    inset: 0;
+    background: var(--ink);
+    z-index: 200;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /* barre de progression en haut */
+  .proj-page-progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--rust), var(--silver-mid));
+    z-index: 201;
+    transition: width 0.1s linear;
+    pointer-events: none;
+  }
+
+  .proj-page-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 2.5rem;
+    background: rgba(13,13,11,0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(196,202,210,0.07);
+    gap: 1rem;
+  }
+
+  .proj-page-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--silver-mid);
+    background: transparent;
+    border: 1px solid var(--silver-dim);
+    padding: 0.5rem 1rem;
+    cursor: crosshair;
+    transition: all 0.2s;
+    border-radius: 0 1rem 0 1rem;
+    text-decoration: none;
+  }
+  .proj-page-back:hover {
+    border-color: var(--silver);
+    color: var(--silver-bright);
+    border-radius: 1rem 0 1rem 0;
+  }
+
+  .proj-page-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .proj-page-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+    background: transparent;
+    border: 1px solid rgba(196,202,210,0.1);
+    padding: 0.4rem 0.8rem;
+    cursor: crosshair;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .proj-page-nav-btn:hover:not(:disabled) {
+    border-color: var(--silver-dim);
+    color: var(--silver-mid);
+  }
+  .proj-page-nav-btn:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+  }
+
+  .proj-page-counter {
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    color: var(--silver-dim);
+    padding: 0 0.6rem;
+    white-space: nowrap;
+  }
+
+  /* ── HERO DU PROJET ── */
+  .proj-page-hero {
+    position: relative;
+    padding: 5rem 2.5rem 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 3rem;
+    align-items: end;
+    border-bottom: 1px solid rgba(196,202,210,0.06);
+  }
+
+  /* grand numéro de fond */
+  .proj-page-hero-num {
+    position: absolute;
+    right: 2rem;
+    top: 1rem;
+    font-family: var(--display);
+    font-size: clamp(6rem, 18vw, 14rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(196,202,210,0.05);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .proj-page-category {
+    font-size: 0.58rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--rust);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+  }
+  .proj-page-category::before {
+    content: '';
+    width: 1.5rem;
+    height: 1px;
+    background: linear-gradient(90deg, var(--rust), var(--silver-mid));
+  }
+
+  .proj-page-title {
+    font-family: var(--display);
+    font-size: clamp(2.8rem, 7vw, 7rem);
+    line-height: 0.9;
+    letter-spacing: 0.01em;
+    color: var(--paper);
+    margin-bottom: 1.8rem;
+  }
+
+  .proj-page-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+  }
+
+  .proj-page-badge {
+    font-size: 0.5rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid rgba(196,202,210,0.12);
+    color: var(--silver-dim);
+    border-radius: 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .proj-page-hero-aside {
+    text-align: right;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ── BODY DU PROJET ── */
+  .proj-page-body {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2.5rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .proj-page-main { }
+
+  .proj-page-section {
+    margin-bottom: 3rem;
+  }
+
+  .proj-page-section-label {
+    font-size: 0.52rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .proj-page-section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(196,202,210,0.08);
+  }
+
+  .proj-page-text {
+    font-size: 0.82rem;
+    line-height: 1.95;
+    color: var(--concrete);
+  }
+
+  .proj-page-readme {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    line-height: 1.8;
+    color: var(--concrete);
+    background: rgba(196,202,210,0.03);
+    border: 1px solid rgba(196,202,210,0.07);
+    border-left: 2px solid var(--silver-dim);
+    padding: 1.5rem;
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+
+  .proj-page-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .proj-page-tag {
+    font-size: 0.52rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid rgba(196,202,210,0.12);
+    color: var(--silver-mid);
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .proj-page-tag:hover {
+    border-color: var(--silver-dim);
+    color: var(--silver-bright);
+  }
+  .proj-page-tag.rust {
+    border-color: rgba(184,74,46,0.35);
+    color: var(--rust);
+  }
+
+  /* ── RICH CONTENT BLOCKS ── */
+
+  /* ── Section tabs (pages du projet) ── */
+  .proj-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid rgba(196,202,210,0.08);
+    overflow-x: auto;
+    scrollbar-width: none;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+  }
+  .proj-tabs::-webkit-scrollbar { display: none; }
+
+  .proj-tab {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 1rem 1.5rem;
+    color: var(--silver-dim);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: crosshair;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .proj-tab:hover { color: var(--silver-mid); }
+  .proj-tab.active {
+    color: var(--paper);
+    border-bottom-color: var(--rust);
+  }
+  .proj-tab-count {
+    font-size: 0.45rem;
+    background: rgba(196,202,210,0.1);
+    padding: 0.1rem 0.4rem;
+    border-radius: 2px;
+    color: var(--silver-dim);
+  }
+  .proj-tab.active .proj-tab-count {
+    background: rgba(184,74,46,0.15);
+    color: var(--rust);
+  }
+
+  /* ── Content section container ── */
+  .rich-section {
+    margin-bottom: 2.8rem;
+  }
+
+  /* ── TEXT block ── */
+  .rich-text {
+    font-size: 0.84rem;
+    line-height: 2;
+    color: var(--concrete);
+  }
+  .rich-text p { margin-bottom: 1rem; }
+  .rich-text strong { color: var(--silver-bright); font-weight: 700; }
+  .rich-text em { font-style: italic; color: var(--silver-mid); }
+
+  /* ── HEADING block ── */
+  .rich-h2 {
+    font-family: var(--display);
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    letter-spacing: 0.04em;
+    color: var(--paper);
+    line-height: 1;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid rgba(196,202,210,0.07);
+  }
+  .rich-h3 {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--silver-bright);
+    margin-bottom: 0.8rem;
+  }
+
+  /* ── IMAGE block ── */
+  .rich-image-wrap {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(196,202,210,0.07);
+    cursor: zoom-in;
+  }
+  .rich-image-wrap img {
+    width: 100%;
+    display: block;
+    transition: transform 0.4s ease, filter 0.4s ease;
+    filter: grayscale(8%) contrast(1.02);
+  }
+  .rich-image-wrap:hover img {
+    transform: scale(1.015);
+    filter: grayscale(0%) contrast(1.05);
+  }
+  .rich-image-caption {
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+    padding: 0.7rem 1rem;
+    border-top: 1px solid rgba(196,202,210,0.06);
+    background: rgba(196,202,210,0.02);
+  }
+
+  /* ── GALLERY block ── */
+  .rich-gallery {
+    display: grid;
+    gap: 1px;
+    background: rgba(196,202,210,0.07);
+    border: 1px solid rgba(196,202,210,0.07);
+  }
+  .rich-gallery[data-cols="2"] { grid-template-columns: 1fr 1fr; }
+  .rich-gallery[data-cols="3"] { grid-template-columns: 1fr 1fr 1fr; }
+  .rich-gallery[data-cols="4"] { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  .rich-gallery-item {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    cursor: zoom-in;
+    background: rgba(196,202,210,0.04);
+  }
+  .rich-gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease, filter 0.4s ease;
+    filter: grayscale(10%);
+  }
+  .rich-gallery-item:hover img {
+    transform: scale(1.05);
+    filter: grayscale(0%);
+  }
+  .rich-gallery-item::after {
+    content: '⊕';
+    position: absolute;
+    bottom: 0.6rem;
+    right: 0.6rem;
+    font-size: 1rem;
+    color: var(--silver-bright);
+    opacity: 0;
+    transition: opacity 0.2s;
+    text-shadow: 0 0 6px rgba(0,0,0,0.8);
+  }
+  .rich-gallery-item:hover::after { opacity: 1; }
+
+  /* ── CODE block ── */
+  .rich-code-wrap {
+    border: 1px solid rgba(196,202,210,0.07);
+    overflow: hidden;
+  }
+  .rich-code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1rem;
+    background: rgba(196,202,210,0.03);
+    border-bottom: 1px solid rgba(196,202,210,0.06);
+  }
+  .rich-code-lang {
+    font-size: 0.5rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--rust);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .rich-code-lang::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--rust);
+    box-shadow: 0 0 6px rgba(184,74,46,0.5);
+  }
+  .rich-code-copy {
+    font-family: var(--mono);
+    font-size: 0.48rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+    background: transparent;
+    border: 1px solid rgba(196,202,210,0.1);
+    padding: 0.2rem 0.6rem;
+    cursor: crosshair;
+    transition: all 0.2s;
+  }
+  .rich-code-copy:hover { color: var(--silver-bright); border-color: var(--silver-dim); }
+  .rich-code-copy.copied { color: #4caf80; border-color: rgba(76,175,128,0.4); }
+
+  .rich-code-block {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    line-height: 1.75;
+    color: var(--concrete);
+    background: #0a0a08;
+    padding: 1.5rem;
+    overflow-x: auto;
+    white-space: pre;
+    margin: 0;
+  }
+  /* Numéros de ligne */
+  .rich-code-block.line-numbers {
+    counter-reset: line;
+  }
+
+  /* ── CALLOUT block ── */
+  .rich-callout {
+    display: flex;
+    gap: 1rem;
+    padding: 1.2rem 1.4rem;
+    border: 1px solid;
+    position: relative;
+    overflow: hidden;
+  }
+  .rich-callout::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+  .rich-callout.info    { border-color: rgba(90,130,200,0.2); background: rgba(90,130,200,0.04); }
+  .rich-callout.info::before    { background: #5a82c8; }
+  .rich-callout.warning { border-color: rgba(240,165,0,0.2); background: rgba(240,165,0,0.04); }
+  .rich-callout.warning::before { background: #f0a500; }
+  .rich-callout.success { border-color: rgba(76,175,128,0.2); background: rgba(76,175,128,0.04); }
+  .rich-callout.success::before { background: #4caf80; }
+  .rich-callout.danger  { border-color: rgba(184,74,46,0.3); background: rgba(184,74,46,0.05); }
+  .rich-callout.danger::before  { background: var(--rust); }
+
+  .rich-callout-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    padding-top: 0.1rem;
+  }
+  .rich-callout-body { flex: 1; }
+  .rich-callout-title {
+    font-family: var(--display);
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.4rem;
+  }
+  .rich-callout.info    .rich-callout-title { color: #7aa0d8; }
+  .rich-callout.warning .rich-callout-title { color: #f0b830; }
+  .rich-callout.success .rich-callout-title { color: #6ccc98; }
+  .rich-callout.danger  .rich-callout-title { color: var(--rust); }
+  .rich-callout-text {
+    font-size: 0.75rem;
+    line-height: 1.8;
+    color: var(--concrete);
+  }
+
+  /* ── METRICS block ── */
+  .rich-metrics {
+    display: grid;
+    gap: 1px;
+    background: rgba(196,202,210,0.07);
+    border: 1px solid rgba(196,202,210,0.07);
+  }
+  .rich-metrics[data-cols="2"] { grid-template-columns: 1fr 1fr; }
+  .rich-metrics[data-cols="3"] { grid-template-columns: 1fr 1fr 1fr; }
+  .rich-metrics[data-cols="4"] { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  .rich-metric {
+    background: var(--ink);
+    padding: 1.8rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s;
+  }
+  .rich-metric:hover { background: #111210; }
+  .rich-metric::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1.5px;
+    background: var(--silver-gradient);
+    background-size: 200% auto;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s ease;
+  }
+  .rich-metric:hover::after { transform: scaleX(1); animation: silver-shimmer 3s linear infinite; }
+
+  .rich-metric-value {
+    font-family: var(--display);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+    background: var(--silver-gradient);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: silver-shimmer 5s linear infinite;
+  }
+  .rich-metric-label {
+    font-size: 0.52rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+    margin-bottom: 0.3rem;
+  }
+  .rich-metric-sub {
+    font-size: 0.65rem;
+    color: var(--concrete);
+  }
+  .rich-metric-trend {
+    font-size: 0.6rem;
+    margin-top: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+  }
+  .rich-metric-trend.up   { color: #6ccc98; background: rgba(76,175,128,0.1); }
+  .rich-metric-trend.down { color: var(--rust); background: rgba(184,74,46,0.1); }
+  .rich-metric-trend.flat { color: var(--silver-dim); background: rgba(196,202,210,0.06); }
+
+  /* ── TIMELINE block ── */
+  .rich-timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+  .rich-timeline::before {
+    content: '';
+    position: absolute;
+    left: 5px; top: 8px; bottom: 8px;
+    width: 1px;
+    background: linear-gradient(180deg, var(--rust), var(--silver-dim), transparent);
+  }
+
+  .rich-timeline-item {
+    position: relative;
+    padding: 0 0 2rem 1.5rem;
+  }
+  .rich-timeline-item:last-child { padding-bottom: 0; }
+
+  .rich-timeline-dot {
+    position: absolute;
+    left: -2rem;
+    top: 0.3rem;
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    border: 1.5px solid var(--silver-mid);
+    background: var(--ink);
+    box-shadow: 0 0 8px rgba(196,202,210,0.2);
+    transition: all 0.2s;
+  }
+  .rich-timeline-item:hover .rich-timeline-dot {
+    background: var(--rust);
+    border-color: var(--rust);
+    box-shadow: 0 0 10px rgba(184,74,46,0.4);
+  }
+
+  .rich-timeline-date {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 0.3rem;
+  }
+  .rich-timeline-title {
+    font-family: var(--display);
+    font-size: 1.1rem;
+    letter-spacing: 0.04em;
+    color: var(--silver-bright);
+    margin-bottom: 0.4rem;
+  }
+  .rich-timeline-text {
+    font-size: 0.75rem;
+    line-height: 1.8;
+    color: var(--concrete);
+  }
+
+  /* ── LIST block ── */
+  .rich-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .rich-list li {
+    display: flex;
+    gap: 0.8rem;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: var(--concrete);
+    align-items: flex-start;
+  }
+  .rich-list li::before {
+    content: '◆';
+    font-size: 0.4rem;
+    color: var(--rust);
+    flex-shrink: 0;
+    margin-top: 0.5rem;
+  }
+  .rich-list.check li::before {
+    content: '✓';
+    font-size: 0.6rem;
+    color: #4caf80;
+    margin-top: 0.2rem;
+  }
+  .rich-list.cross li::before {
+    content: '✕';
+    font-size: 0.6rem;
+    color: var(--rust);
+    margin-top: 0.2rem;
+  }
+
+  /* ── DIVIDER block ── */
+  .rich-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+    color: var(--silver-dim);
+    font-size: 0.5rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+  .rich-divider::before, .rich-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(196,202,210,0.07);
+  }
+
+  /* ── QUOTE block ── */
+  .rich-quote {
+    border-left: 3px solid var(--silver-dim);
+    padding: 0.8rem 0 0.8rem 1.5rem;
+    margin: 0;
+  }
+  .rich-quote-text {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--silver-bright);
+    margin-bottom: 0.5rem;
+  }
+  .rich-quote-author {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+  }
+
+  /* ── TABLE block ── */
+  .rich-table-wrap {
+    overflow-x: auto;
+    border: 1px solid rgba(196,202,210,0.07);
+  }
+  .rich-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.72rem;
+  }
+  .rich-table th {
+    font-size: 0.5rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid rgba(196,202,210,0.1);
+    background: rgba(196,202,210,0.02);
+    text-align: left;
+    font-weight: normal;
+  }
+  .rich-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(196,202,210,0.04);
+    color: var(--concrete);
+    vertical-align: top;
+  }
+  .rich-table tr:last-child td { border-bottom: none; }
+  .rich-table tr:hover td { background: rgba(196,202,210,0.02); }
+  .rich-table td strong { color: var(--silver-bright); }
+
+  /* ── LIGHTBOX ── */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(5,5,4,0.96);
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-out;
+    padding: 2rem;
+  }
+  .lightbox img {
+    max-width: 90vw;
+    max-height: 88vh;
+    object-fit: contain;
+    border: 1px solid rgba(196,202,210,0.1);
+    box-shadow: 0 0 80px rgba(0,0,0,0.8);
+  }
+  .lightbox-caption {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+    background: rgba(13,13,11,0.9);
+    padding: 0.4rem 1rem;
+    white-space: nowrap;
+  }
+  .lightbox-close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: transparent;
+    border: 1px solid rgba(196,202,210,0.15);
+    color: var(--silver-mid);
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: crosshair;
+    font-size: 1rem;
+    transition: all 0.2s;
+    border-radius: 0 0.5rem 0 0.5rem;
+  }
+  .lightbox-close:hover { border-color: var(--rust); color: var(--rust); }
+
+  .lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(13,13,11,0.8);
+    border: 1px solid rgba(196,202,210,0.1);
+    color: var(--silver-mid);
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: crosshair;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+  }
+  .lightbox-nav:hover { border-color: var(--silver-dim); color: var(--silver-bright); }
+  .lightbox-nav.prev { left: 1.5rem; }
+  .lightbox-nav.next { right: 1.5rem; }
+  .lightbox-nav:disabled { opacity: 0.2; cursor: not-allowed; }
+  .lightbox-counter {
+    position: absolute;
+    top: 1.8rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.5rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+  }
+
+  .lb-enter-active, .lb-leave-active { transition: opacity 0.18s; }
+  .lb-enter-from, .lb-leave-to { opacity: 0; }
+  .proj-page-sidebar {
+    position: sticky;
+    top: 5rem;
+  }
+
+  .proj-page-info-card {
+    border: 1px solid rgba(196,202,210,0.08);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+  .proj-page-info-card-title {
+    font-size: 0.5rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+    padding: 0.7rem 1.2rem;
+    border-bottom: 1px solid rgba(196,202,210,0.06);
+    background: rgba(196,202,210,0.02);
+  }
+
+  .proj-page-info-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 0.8rem 1.2rem;
+    border-bottom: 1px solid rgba(196,202,210,0.04);
+    gap: 1rem;
+  }
+  .proj-page-info-row:last-child { border-bottom: none; }
+
+  .proj-page-info-key {
+    font-size: 0.5rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+    flex-shrink: 0;
+  }
+
+  .proj-page-info-val {
+    font-size: 0.7rem;
+    color: var(--silver-bright);
+    text-align: right;
+  }
+
+  .proj-page-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .proj-page-link {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.8rem 1.2rem;
+    border: 1px solid var(--silver-dim);
+    color: var(--silver);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    transition: all 0.2s;
+    border-radius: 0 1rem 0 1rem;
+  }
+  .proj-page-link:hover {
+    border-color: var(--silver-bright);
+    color: var(--silver-bright);
+    border-radius: 1rem 0 1rem 0;
+  }
+  .proj-page-link.primary {
+    background: var(--rust);
+    border-color: var(--rust);
+    color: var(--paper);
+  }
+  .proj-page-link.primary:hover {
+    background: transparent;
+    color: var(--rust);
+  }
+
+  /* ── FOOTER PROJET — nav suivant/précédent ── */
+  .proj-page-footer-nav {
+    border-top: 1px solid rgba(196,202,210,0.07);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .proj-page-footer-item {
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    text-align: left;
+    transition: background 0.2s;
+    color: var(--paper);
+    text-decoration: none;
+  }
+  .proj-page-footer-item:hover { background: rgba(196,202,210,0.03); }
+  .proj-page-footer-item.next { text-align: right; border-left: 1px solid rgba(196,202,210,0.07); }
+  .proj-page-footer-item:disabled { opacity: 0.25; cursor: default; }
+  .proj-page-footer-item:disabled:hover { background: transparent; }
+
+  .proj-page-footer-dir {
+    font-size: 0.5rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+  }
+
+  .proj-page-footer-name {
+    font-family: var(--display);
+    font-size: clamp(1rem, 2.5vw, 1.8rem);
+    color: var(--silver-bright);
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+  }
+
+  /* ── TRANSITIONS PAGE PROJET ── */
+  .page-slide-enter-active {
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  }
+  .page-slide-leave-active {
+    transition: transform 0.3s cubic-bezier(0.7, 0, 0.84, 0), opacity 0.25s ease;
+  }
+  .page-slide-enter-from { transform: translateY(40px); opacity: 0; }
+  .page-slide-leave-to  { transform: translateY(-20px); opacity: 0; }
+
+  @media (max-width: 768px) {
+    .proj-page-hero   { grid-template-columns: 1fr; }
+    .proj-page-hero-aside { text-align: left; }
+    .proj-page-body   { grid-template-columns: 1fr; gap: 2rem; }
+    .proj-page-sidebar { position: static; }
+    .proj-page-topbar { padding: 1rem 1.2rem; }
+    .proj-page-back span { display: none; }
+  }
+
+  /* ── VUE TRANSITIONS ── */
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity 0.5s, transform 0.5s;
+  }
+  .fade-enter-from { opacity: 0; transform: translateY(20px); }
+  .fade-leave-to   { opacity: 0; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .hero                { grid-template-columns: 1fr; }
+    .hero-right          { display: none; }
+    .about-grid          { grid-template-columns: 1fr; }
+    .skills-masonry      { grid-template-columns: 1fr 1fr; }
+    .contact-wrap        { grid-template-columns: 1fr; }
+    .exp-item            { grid-template-columns: 1fr; }
+    .exp-date            { padding-bottom: 0.5rem; }
+    nav                  { padding: 1rem 1.5rem; }
+    .nav-links           { display: none; }
+    .edu-timeline        { padding-left: 1.5rem; margin-left: 0.5rem; }
+    .edu-item::before    { left: -1.5rem; }
+    .edu-item::after     { left: calc(-1.5rem + 7px); }
+  }
+</style>
+</head>
+
+<body>
+<div id="app">
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">L<span>.</span>P</a>
+    <ul class="nav-links">
+      <li><a href="#about">Profil</a></li>
+      <li><a href="#experience">Expérience</a></li>
+      <li><a href="#skills">Compétences</a></li>
+      <li><a href="#projects">Projets</a></li>
+      <li><a href="#education">Formation</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-left">
+      <div class="hero-tag">IT Project Manager · Cloud &amp; Infrastructure</div>
+      <h1 class="hero-name">
+        LÉO<br>
+        <span class="accent">PROUD</span>HOM
+      </h1>
+      <p class="hero-role">Ingénieur réseau &amp; stockage cloud.<br>Apprenti HPE · Master IPI · Toulouse</p>
+      <div class="hero-cta">
+        <a href="#experience" class="btn btn-primary">Voir parcours</a>
+        <a href="#contact"    class="btn btn-outline">Me contacter</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-grid-lines"></div>
+      <div class="hero-blob">
+        <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+          <path fill="var(--silver-mid)"
+            d="M200,100 C300,50 400,150 380,280 C360,400 200,450 100,380 C0,310 20,180 80,120 C120,70 150,130 200,100Z">
+            <animate attributeName="d" dur="12s" repeatCount="indefinite"
+              values="
+                M200,100 C300,50 400,150 380,280 C360,400 200,450 100,380 C0,310 20,180 80,120 C120,70 150,130 200,100Z;
+                M220,80 C350,20 420,140 400,300 C380,440 210,460 100,385 C-10,330 15,155 85,95 C135,45 165,110 220,80Z;
+                M190,115 C310,40 415,165 390,295 C368,425 188,445 88,372 C-8,298 28,192 88,132 C130,82 145,155 190,115Z;
+                M200,100 C300,50 400,150 380,280 C360,400 200,450 100,380 C0,310 20,180 80,120 C120,70 150,130 200,100Z"
+            />
+          </path>
+        </svg>
+      </div>
+      <div class="hero-stat-block">
+        <div class="hero-stat" v-for="s in stats" :key="s.num">
+          <div class="num">{{ s.num }}</div>
+          <div class="label">{{ s.label }}</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span v-for="i in 2" :key="i">
+        <span>Cloud Infrastructure</span>
+        <span>HPE Compute</span>
+        <span>Network Engineering</span>
+        <span>Cybersécurité</span>
+        <span>IT Project Management</span>
+        <span>Storage Solutions</span>
+        <span>CERT Monitoring</span>
+        <span>Linux Systems</span>
+        <span>Active Directory</span>
+        <span>Virtualisation</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- ABOUT / PROFIL -->
+  <section id="about">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">PROFIL</h2>
+    </div>
+    <div class="about-grid">
+
+      <div class="about-text">
+        <p>
+          Ingénieur IT en devenir, je construis mon expertise à la frontière entre
+          <strong>infrastructure physique</strong> et <strong>cloud</strong> — là où la plupart des gens
+          ne regardent plus, préférant l'abstraction des plateformes SaaS.
+        </p>
+        <p>
+          Mon parcours est une accumulation délibérée de couches techniques :
+          du BAC PRO SN à un Master en Réseaux &amp; Cybersécurité, chaque
+          étape s'appuie sur la précédente. Chez HPE, je travaille directement
+          sur des architectures Compute qui alimentent les infrastructures
+          critiques de grandes entreprises.
+        </p>
+        <p>
+          Je pratique une <strong>veille technologique active</strong> — CERT, Google Alerts,
+          flux CVE — parce que la sécurité n'est pas un état, c'est une
+          pratique quotidienne.
+        </p>
+      </div>
+
+      <div class="about-aside">
+
+        <!--
+          ╔══════════════════════════════════════════════════════╗
+          ║  PHOTO DE PROFIL                                     ║
+          ║  → Remplacer src="./assets/photo-profil.jpg"         ║
+          ║    par le chemin de votre photo professionnelle.     ║
+          ║  Format : carré, fond neutre, 400×400 px minimum.    ║
+          ╚══════════════════════════════════════════════════════╝
+        -->
+        <div class="profile-photo-wrap">
+          <img
+            src="https://i.postimg.cc/RFWgPQ6p/1679161329025-1.jpg"
+            alt="Léo Proudhom — photo professionnelle"
+            class="profile-photo"
+            width="68"
+            height="68"
+            loading="lazy"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          >
+          <!-- Silhouette affichée si la photo est introuvable -->
+          <div class="profile-photo-fallback" aria-hidden="true">
+            <svg viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg" width="68" height="68">
+              <circle cx="34" cy="22" r="11" stroke="currentColor" stroke-width="1.2" opacity="0.5"/>
+              <path d="M10 60 C10 44 58 44 58 60" stroke="currentColor" stroke-width="1.2" opacity="0.4" fill="none"/>
+            </svg>
+          </div>
+          <div class="profile-photo-meta">
+            <span class="profile-photo-name">LÉO PROUDHOM</span>
+            <span class="profile-photo-title">Ingénieur IT · HPE · Toulouse</span>
+          </div>
+        </div>
+
+        <p class="aside-label">Stack principale</p>
+        <div class="chip-group">
+          <span class="chip active" v-for="t in techStack" :key="t">{{ t }}</span>
+        </div>
+
+        <p class="aside-label">Langues</p>
+        <div class="chip-group">
+          <span class="chip" v-for="l in langs" :key="l">{{ l }}</span>
+        </div>
+
+        <p class="aside-label" style="margin-top:1.5rem">Localisation</p>
+        <p style="font-size:0.75rem;color:var(--concrete)">
+          Toulouse, Occitanie<br>
+          <span style="color:var(--silver-dim)">Labège (HPE)</span>
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">EXPÉRIENCE</h2>
+    </div>
+    <div class="exp-list">
+      <div class="exp-item" v-for="exp in experiences" :key="exp.company">
+        <div class="exp-date">{{ exp.period }}</div>
+        <div>
+          <div class="exp-company">{{ exp.company }}</div>
+          <div class="exp-role">{{ exp.role }}</div>
+          <p class="exp-desc">{{ exp.desc }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">COMPÉTENCES</h2>
+    </div>
+    <div class="skills-masonry">
+      <div class="skill-cell" v-for="skill in skills" :key="skill.name">
+        <span class="skill-icon">{{ skill.icon }}</span>
+        <div class="skill-name">{{ skill.name }}</div>
+        <div class="skill-level">
+          <span class="dot" :class="{ filled: i <= skill.level }"
+            v-for="i in 5" :key="i"></span>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag" v-for="t in skill.tags" :key="t">{{ t }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">PROJETS</h2>
+    </div>
+
+    <!-- Barre d'erreur si fetch échoue -->
+    <div class="proj-error-bar" v-if="projError">
+      ⚠ {{ projError }} — affichage des projets locaux uniquement.
+    </div>
+
+    <!-- Toolbar filtres + refresh -->
+    <div class="projects-toolbar">
+      <div class="proj-filter-group">
+        <button class="proj-filter"
+          :class="{ active: projFilter === 'all' }"
+          @click="projFilter = 'all'">Tous</button>
+        <button class="proj-filter"
+          :class="{ active: projFilter === 'homelab' }"
+          @click="projFilter = 'homelab'">Homelab</button>
+        <button class="proj-filter"
+          :class="{ active: projFilter === 'dev' }"
+          @click="projFilter = 'dev'">Dev</button>
+        <button class="proj-filter"
+          :class="{ active: projFilter === 'security' }"
+          @click="projFilter = 'security'">Sécu</button>
+        <button class="proj-filter"
+          :class="{ active: projFilter === 'network' }"
+          @click="projFilter = 'network'">Réseau</button>
+      </div>
+      <button class="proj-reload-btn" :class="{ spinning: projLoading }" @click="loadProjects">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M1 8a7 7 0 1 0 7-7 7 7 0 0 0-5 2.1L1 5"/>
+          <path d="M1 1v4h4"/>
+        </svg>
+        Rafraîchir
+      </button>
+    </div>
+
+    <!-- Skeletons pendant le chargement -->
+    <div class="proj-grid" v-if="projLoading">
+      <div class="proj-skeleton" v-for="i in 6" :key="i"></div>
+    </div>
+
+    <!-- Grille de projets -->
+    <div class="proj-grid" v-else>
+      <template v-if="pagedProjects.length">
+        <div class="proj-card" v-for="p in pagedProjects" :key="p.id" @click="openProject(p)">
+          <div>
+            <span class="proj-source-badge">
+              {{ sourceIcon(p.source) }} {{ p.source }}
+            </span>
+          </div>
+          <div class="proj-card-header">
+            <div class="proj-name">{{ p.name }}</div>
+            <span class="proj-type-icon">{{ typeIcon(p.category) }}</span>
+          </div>
+          <p class="proj-desc">{{ p.description }}</p>
+          <div class="proj-tags">
+            <span class="proj-tag" :class="{ highlight: i === 0 }"
+              v-for="(t, i) in p.tags" :key="t">{{ t }}</span>
+          </div>
+          <div class="proj-footer">
+            <span>
+              <span class="proj-status-dot" :class="p.status"></span>
+              {{ statusLabel(p.status) }}
+            </span>
+            <span class="proj-link" style="color:var(--silver-dim);font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;">
+              ↳ Ouvrir
+            </span>
+          </div>
+        </div>
+      </template>
+      <div class="proj-empty" v-else>
+        ◆ Aucun projet dans cette catégorie
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="proj-pagination" v-if="totalPages > 1">
+      <div class="proj-pagination-info">
+        Page <strong>{{ currentPage }}</strong> / {{ totalPages }} —
+        <strong>{{ filteredProjects.length }}</strong> projets
+      </div>
+      <div class="proj-pagination-controls">
+        <button class="proj-page-btn" @click="goToPage(1)" :disabled="currentPage === 1">«</button>
+        <button class="proj-page-btn" @click="goToPage(currentPage - 1)" :disabled="currentPage === 1">‹</button>
+        <template v-for="p in pageRange" :key="p">
+          <span v-if="p === '…'" style="color:var(--silver-dim);padding:0 0.3rem;font-size:0.7rem;">…</span>
+          <button v-else class="proj-page-btn" :class="{ active: p === currentPage }"
+            @click="goToPage(p)">{{ p }}</button>
+        </template>
+        <button class="proj-page-btn" @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages">›</button>
+        <button class="proj-page-btn" @click="goToPage(totalPages)" :disabled="currentPage === totalPages">»</button>
+      </div>
+    </div>
+
+    <p class="proj-last-updated" v-if="projLastFetch">
+      Mis à jour · {{ projLastFetch }}
+    </p>
+  </section>
+
+  <!-- PROJECT FULL PAGE -->
+  <teleport to="body">
+    <transition name="page-slide">
+      <div class="proj-page" v-if="activeProject" role="main" :key="activeProject.id">
+
+        <!-- Barre de progression lecture -->
+        <div class="proj-page-progress" :style="{ width: readProgress + '%' }"></div>
+
+        <!-- Top bar sticky -->
+        <div class="proj-page-topbar">
+          <button class="proj-page-back" @click="closeProject">
+            ← <span>Retour aux projets</span>
+          </button>
+
+          <div class="proj-page-nav">
+            <button class="proj-page-nav-btn" @click="navProject(-1)"
+              :disabled="activeIndex <= 0">
+              ← <span style="opacity:.6">{{ prevProjectName }}</span>
+            </button>
+            <span class="proj-page-counter">
+              {{ activeIndex + 1 }} / {{ filteredProjects.length }}
+            </span>
+            <button class="proj-page-nav-btn" @click="navProject(1)"
+              :disabled="activeIndex >= filteredProjects.length - 1">
+              <span style="opacity:.6">{{ nextProjectName }}</span> →
+            </button>
+          </div>
+        </div>
+
+        <!-- Hero -->
+        <div class="proj-page-hero">
+          <div class="proj-page-hero-num" aria-hidden="true">
+            {{ String(activeIndex + 1).padStart(2, '0') }}
+          </div>
+
+          <div>
+            <div class="proj-page-category">
+              {{ typeIcon(activeProject.category) }} {{ activeProject.category }}
+            </div>
+            <h1 class="proj-page-title">{{ activeProject.name }}</h1>
+            <div class="proj-page-meta-row">
+              <span class="proj-page-badge">{{ sourceIcon(activeProject.source) }} {{ activeProject.source }}</span>
+              <span class="proj-page-badge">
+                <span class="proj-status-dot" :class="activeProject.status"></span>
+                {{ statusLabel(activeProject.status) }}
+              </span>
+              <span class="proj-page-badge" v-if="activeProject.updatedAt">↻ {{ formatDate(activeProject.updatedAt) }}</span>
+              <span class="proj-page-badge" v-if="activeProject.highlight" style="border-color:rgba(184,74,46,.35);color:var(--rust)">★ {{ activeProject.highlight }}</span>
+            </div>
+          </div>
+
+          <div class="proj-page-hero-aside">
+            <div v-if="activeProject.version || activeProject.duration"
+              style="display:flex;flex-direction:column;gap:1.2rem;text-align:right;">
+              <div v-if="activeProject.version">
+                <div style="font-family:var(--display);font-size:2rem;background:var(--silver-gradient);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:silver-shimmer 4s linear infinite">{{ activeProject.version }}</div>
+                <div style="font-size:.5rem;letter-spacing:.25em;text-transform:uppercase;color:var(--silver-dim);">version</div>
+              </div>
+              <div v-if="activeProject.duration">
+                <div style="font-family:var(--display);font-size:2rem;color:var(--silver-bright)">{{ activeProject.duration }}</div>
+                <div style="font-size:.5rem;letter-spacing:.25em;text-transform:uppercase;color:var(--silver-dim);">durée</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TABS (si le projet a des onglets/pages) -->
+        <div class="proj-tabs" v-if="activeTabs.length > 1">
+          <button
+            v-for="(tab, ti) in activeTabs" :key="ti"
+            class="proj-tab"
+            :class="{ active: activeTab === ti }"
+            @click="setTab(ti)">
+            {{ tab.icon || '◆' }} {{ tab.title }}
+            <span class="proj-tab-count" v-if="tab.sections && tab.sections.length">
+              {{ tab.sections.length }}
+            </span>
+          </button>
+        </div>
+
+        <!-- Body -->
+        <div class="proj-page-body" ref="projPageBody">
+          <div class="proj-page-main">
+
+            <!-- RICH SECTIONS RENDERER -->
+            <template v-if="activePageSections.length">
+              <div v-for="(sec, si) in activePageSections" :key="si" class="rich-section">
+
+                <!-- type: heading -->
+                <template v-if="sec.type === 'heading'">
+                  <div :class="sec.level === 3 ? 'rich-h3' : 'rich-h2'">{{ sec.text }}</div>
+                </template>
+
+                <!-- type: text -->
+                <template v-else-if="sec.type === 'text'">
+                  <div class="proj-page-section-label" v-if="sec.label">{{ sec.label }}</div>
+                  <div class="rich-text" v-html="renderText(sec.content)"></div>
+                </template>
+
+                <!-- type: image -->
+                <template v-else-if="sec.type === 'image'">
+                  <div class="proj-page-section-label" v-if="sec.label">{{ sec.label }}</div>
+                  <div class="rich-image-wrap" @click="openLightbox([sec.src], 0, sec.caption)">
+                    <img :src="sec.src" :alt="sec.caption || sec.label || ''" loading="lazy">
+                    <div class="rich-image-caption" v-if="sec.caption">{{ sec.caption }}</div>
+                  </div>
+                </template>
+
+                <!-- type: gallery -->
+                <template v-else-if="sec.type === 'gallery'">
+                  <div class="proj-page-section-label" v-if="sec.label">{{ sec.label }}</div>
+                  <div class="rich-gallery" :data-cols="sec.cols || 3">
+                    <div class="rich-gallery-item"
+                      v-for="(img, gi) in sec.images" :key="gi"
+                      @click="openLightbox(sec.images.map(x => typeof x === 'string' ? x : x.src), gi, typeof img === 'string' ? '' : img.caption)">
+                      <img :src="typeof img === 'string' ? img : img.src"
+                           :alt="typeof img === 'string' ? '' : (img.caption || '')"
+                           loading="lazy">
+                    </div>
+                  </div>
+                </template>
+
+                <!-- type: code -->
+                <template v-else-if="sec.type === 'code'">
+                  <div class="proj-page-section-label" v-if="sec.label">{{ sec.label }}</div>
+                  <div class="rich-code-wrap">
+                    <div class="rich-code-header">
+                      <span class="rich-code-lang">{{ sec.lang || 'code' }}</span>
+                      <button class="rich-code-copy"
+                        :class="{ copied: copiedBlock === si }"
+                        @click="copyCode(sec.code, si)">
+                        {{ copiedBlock === si ? '✓ Copié' : '⎘ Copier' }}
+                      </button>
+                    </div>
+                    <pre class="rich-code-block">{{ sec.code }}</pre>
+                  </div>
+                </template>
+
+                <!-- type: callout -->
+                <template v-else-if="sec.type === 'callout'">
+                  <div class="rich-callout" :class="sec.variant || 'info'">
+                    <span class="rich-callout-icon">{{ calloutIcon(sec.variant) }}</span>
+                    <div class="rich-callout-body">
+                      <div class="rich-callout-title" v-if="sec.title">{{ sec.title }}</div>
+                      <div class="rich-callout-text">{{ sec.content }}</div>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- type: metrics -->
+                <template v-else-if="sec.type === 'metrics'">
+                  <div class="proj-page-section-label" v-if="sec.label">{{ sec.label }}</div>
+                  <div class="rich-metrics" :data-cols="sec.cols || sec.items.length">
+                    <div class="rich-metric" v-for="(m, mi) in sec.items" :key="mi">
+                      <div class="rich-metric-label">{{ m.label }}</div>
+                      <div class="rich-metric-value">{{ m.value }}</div>
+                      <div class="rich-metric-sub" v-if="m.sub">{{ m.sub }}</div>
+                      <div v-if="m.trend" class="rich-metric-trend"
+                        :class="m.trend > 0 ? 'up' : m.trend < 0 ? 'down' : 'flat'">
+                        {{ m.trend > 0 ? '↑' : m.trend < 0 ? '↓' : '→' }}
+                        {{ m.trendLabel || (Math.abs(m.trend) + '%') }}
+                      </div>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- type: timeline -->
+                <template v-else-if="sec.type === 'timeline'">
+                  <div class="proj-page-section-label" v-if="sec.label">{{ sec.label }}</div>
+                  <div class="rich-timeline">
+                    <div class="rich-timeline-item" v-for="(step, si2) in sec.steps" :key="si2">
+                      <div class="rich-timeline-dot"></div>
+                      <div class="rich-timeline-date" v-if="step.date">{{ step.date }}</div>
+                      <div class="rich-timeline-title">{{ step.title }}</div>
+                      <div class="rich-timeline-text" v-if="step.text">{{ step.text }}</div>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- type: list -->
+                <template v-else-if="sec.type === 'list'">
+                  <div class="proj-page-section-label" v-if="sec.label">{{ sec.label }}</div>
+                  <ul class="rich-list" :class="sec.variant">
+                    <li v-for="(item, li) in sec.items" :key="li">{{ item }}</li>
+                  </ul>
+                </template>
+
+                <!-- type: table -->
+                <template v-else-if="sec.type === 'table'">
+                  <div class="proj-page-section-label" v-if="sec.label">{{ sec.label }}</div>
+                  <div class="rich-table-wrap">
+                    <table class="rich-table">
+                      <thead v-if="sec.headers">
+                        <tr><th v-for="h in sec.headers" :key="h">{{ h }}</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="(row, ri) in sec.rows" :key="ri">
+                          <td v-for="(cell, ci) in row" :key="ci" v-html="cell"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </template>
+
+                <!-- type: quote -->
+                <template v-else-if="sec.type === 'quote'">
+                  <blockquote class="rich-quote">
+                    <div class="rich-quote-text">"{{ sec.text }}"</div>
+                    <div class="rich-quote-author" v-if="sec.author">— {{ sec.author }}</div>
+                  </blockquote>
+                </template>
+
+                <!-- type: divider -->
+                <template v-else-if="sec.type === 'divider'">
+                  <div class="rich-divider">{{ sec.label || '◆' }}</div>
+                </template>
+
+                <!-- type: tags (groupe de tags) -->
+                <template v-else-if="sec.type === 'tags'">
+                  <div class="proj-page-section-label" v-if="sec.label">{{ sec.label }}</div>
+                  <div class="proj-page-tags">
+                    <span class="proj-page-tag" :class="{ rust: sec.accent }"
+                      v-for="t in sec.items" :key="t">{{ t }}</span>
+                  </div>
+                </template>
+
+              </div>
+            </template>
+
+            <!-- Fallback si pas de sections (projet simple) -->
+            <template v-else>
+              <div class="proj-page-section">
+                <div class="proj-page-section-label">Description</div>
+                <p class="proj-page-text">{{ activeProject.description }}</p>
+              </div>
+              <div class="proj-page-section" v-if="activeProject.longDescription">
+                <div class="proj-page-section-label">Détails</div>
+                <p class="proj-page-text">{{ activeProject.longDescription }}</p>
+              </div>
+              <div class="proj-page-section" v-if="activeProject.tech && activeProject.tech.length">
+                <div class="proj-page-section-label">Stack technique</div>
+                <div class="proj-page-tags">
+                  <span class="proj-page-tag rust" v-for="t in activeProject.tech" :key="t">{{ t }}</span>
+                </div>
+              </div>
+              <div class="proj-page-section" v-if="activeProject.tags && activeProject.tags.length">
+                <div class="proj-page-section-label">Tags</div>
+                <div class="proj-page-tags">
+                  <span class="proj-page-tag" :class="{ rust: i === 0 }"
+                    v-for="(t, i) in activeProject.tags" :key="t">{{ t }}</span>
+                </div>
+              </div>
+              <div class="proj-page-section" v-if="activeProject.readme">
+                <div class="proj-page-section-label">README</div>
+                <pre class="proj-page-readme">{{ activeProject.readme }}</pre>
+              </div>
+            </template>
+
+          </div>
+
+          <!-- Sidebar -->
+          <aside class="proj-page-sidebar">
+            <div class="proj-page-info-card">
+              <div class="proj-page-info-card-title">Informations</div>
+              <div class="proj-page-info-row">
+                <span class="proj-page-info-key">Catégorie</span>
+                <span class="proj-page-info-val">{{ activeProject.category }}</span>
+              </div>
+              <div class="proj-page-info-row">
+                <span class="proj-page-info-key">Statut</span>
+                <span class="proj-page-info-val">
+                  <span class="proj-status-dot" :class="activeProject.status"></span>
+                  {{ statusLabel(activeProject.status) }}
+                </span>
+              </div>
+              <div class="proj-page-info-row">
+                <span class="proj-page-info-key">Source</span>
+                <span class="proj-page-info-val">{{ sourceIcon(activeProject.source) }} {{ activeProject.source }}</span>
+              </div>
+              <div class="proj-page-info-row" v-if="activeProject.updatedAt">
+                <span class="proj-page-info-key">Mis à jour</span>
+                <span class="proj-page-info-val">{{ formatDate(activeProject.updatedAt) }}</span>
+              </div>
+              <div class="proj-page-info-row" v-if="activeProject.version">
+                <span class="proj-page-info-key">Version</span>
+                <span class="proj-page-info-val">{{ activeProject.version }}</span>
+              </div>
+              <div class="proj-page-info-row" v-if="activeProject.duration">
+                <span class="proj-page-info-key">Durée</span>
+                <span class="proj-page-info-val">{{ activeProject.duration }}</span>
+              </div>
+              <div class="proj-page-info-row" v-if="activeProject.team">
+                <span class="proj-page-info-key">Équipe</span>
+                <span class="proj-page-info-val">{{ activeProject.team }}</span>
+              </div>
+            </div>
+
+            <div v-if="hasLinks(activeProject)" class="proj-page-links">
+              <a v-if="activeProject.url" :href="activeProject.url" target="_blank" rel="noopener" class="proj-page-link primary">↗ Voir le projet</a>
+              <template v-if="activeProject.links">
+                <a v-for="lnk in activeProject.links" :key="lnk.url"
+                  :href="lnk.url" target="_blank" rel="noopener" class="proj-page-link">
+                  {{ lnk.label || '↗ Lien' }} ↗
+                </a>
+              </template>
+            </div>
+          </aside>
+        </div>
+
+        <!-- Footer nav -->
+        <div class="proj-page-footer-nav">
+          <button class="proj-page-footer-item" :disabled="activeIndex <= 0" @click="navProject(-1)">
+            <span class="proj-page-footer-dir">← Précédent</span>
+            <span class="proj-page-footer-name">{{ prevProjectName || '—' }}</span>
+          </button>
+          <button class="proj-page-footer-item next" :disabled="activeIndex >= filteredProjects.length - 1" @click="navProject(1)">
+            <span class="proj-page-footer-dir">Suivant →</span>
+            <span class="proj-page-footer-name">{{ nextProjectName || '—' }}</span>
+          </button>
+        </div>
+
+      </div>
+    </transition>
+
+    <!-- LIGHTBOX -->
+    <transition name="lb">
+      <div class="lightbox" v-if="lightbox.open" @click.self="closeLightbox">
+        <button class="lightbox-close" @click="closeLightbox">✕</button>
+        <div class="lightbox-counter" v-if="lightbox.images.length > 1">
+          {{ lightbox.index + 1 }} / {{ lightbox.images.length }}
+        </div>
+        <button class="lightbox-nav prev" @click.stop="lbNav(-1)"
+          :disabled="lightbox.index === 0">‹</button>
+        <img :src="lightbox.images[lightbox.index]" :alt="lightbox.caption || ''">
+        <button class="lightbox-nav next" @click.stop="lbNav(1)"
+          :disabled="lightbox.index >= lightbox.images.length - 1">›</button>
+        <div class="lightbox-caption" v-if="lightbox.caption">{{ lightbox.caption }}</div>
+      </div>
+    </transition>
+  </teleport>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2 class="section-title">FORMATION</h2>
+    </div>
+    <div class="edu-timeline">
+      <div class="edu-item" v-for="edu in education" :key="edu.school">
+        <div class="edu-year">{{ edu.year }}</div>
+        <div class="edu-school">{{ edu.school }}</div>
+        <div class="edu-degree">{{ edu.degree }}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2 class="section-title">CONTACT</h2>
+    </div>
+    <div class="contact-wrap">
+      <div>
+        <div class="contact-giant">
+          TRAVAILLONS<span>ENSEMBLE.</span>
+        </div>
+      </div>
+      <div class="contact-links">
+        <a href="/cdn-cgi/l/email-protection#0569606a2b75776a70616d6a6845637760602b6377" class="contact-link">
+          <div class="contact-link-icon">✉</div>
+          <div class="contact-link-info">
+            <span class="contact-link-label">Email</span>
+            <span class="contact-link-value"><span class="__cf_email__" data-cfemail="79151c1657090b160c1d111614391f0b1c1c571f0b">[email&#160;protected]</span></span>
+          </div>
+        </a>
+        <a href="tel:0637906816" class="contact-link">
+          <div class="contact-link-icon">📱</div>
+          <div class="contact-link-info">
+            <span class="contact-link-label">Mobile</span>
+            <span class="contact-link-value">06 37 90 68 16</span>
+          </div>
+        </a>
+        <a href="https://www.linkedin.com/in/leo-proudhom" target="_blank" rel="noopener noreferrer" class="contact-link">
+          <div class="contact-link-icon">in</div>
+          <div class="contact-link-info">
+            <span class="contact-link-label">LinkedIn</span>
+            <span class="contact-link-value">leo-proudhom</span>
+          </div>
+        </a>
+        <a href="https://lp-folio.fr" target="_blank" rel="noopener noreferrer" class="contact-link">
+          <div class="contact-link-icon">↗</div>
+          <div class="contact-link-info">
+            <span class="contact-link-label">Portfolio</span>
+            <span class="contact-link-value">(autre vitrine en cours) lp-folio.fr</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 <span>Léo Proudhom</span> — All systems operational</p>
+    <p>Toulouse · <span>France</span></p>
+  </footer>
+
+</div><!-- #app -->
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+const { createApp } = Vue;
+
+createApp({
+  data() {
+    return {
+      stats: [
+        { num: '3+',  label: 'ans d\'alternance'  },
+        { num: '5',   label: 'diplômes'            },
+        { num: 'HPE', label: 'compute division'    },
+      ],
+      techStack: [
+        'HPE ProLiant', 'VMware', 'Active Directory',
+        'Cisco', 'Linux', 'Windows Server',
+        'VLAN', 'VPN', 'Zabbix', 'SAP'
+      ],
+      langs: ['Français ★★★', 'English ★★☆', 'Latin ☆', 'Mandarin ☆'],
+      experiences: [
+        {
+          company: 'HEWLETT PACKARD ENTERPRISE',
+          role:    'Technical Consultant Compute — Apprentissage',
+          period:  '10/2024 → présent',
+          desc:    'Conseil technique sur les solutions Compute HPE. Déploiement et configuration d\'architectures serveur pour clients grands comptes. Participation à des projets d\'infrastructure cloud hybride au sein de la division Labège (Occitanie).'
+        },
+        {
+          company: 'TOPTEX GROUP',
+          role:    'Assistant IT & Admin Sys — Alternance',
+          period:  '09/2022 → 10/2024',
+          desc:    'Administration des systèmes d\'information (Active Directory, WSUS, GPO). Gestion du parc informatique, déploiement postes et serveurs, support utilisateurs N1/N2. Mise en place de procédures de sécurité réseau et suivi de la PSSI.'
+        },
+        {
+          company: 'ELECTRO DÉPÔT',
+          role:    'SAV Technique — Stage',
+          period:  '11/2021 → 12/2021',
+          desc:    'Support technique clients sur produits électroménagers. Gestion des dossiers via SAP, coordination avec les services techniques fabricants (Samsung). Diagnostic de pannes et rédaction de rapports d\'intervention.'
+        },
+        {
+          company: 'JDC OCCITANIE',
+          role:    'Support TPV & IT — Stage',
+          period:  '04/2020 → 05/2020',
+          desc:    'Maintenance et support sur solutions de caisse (POS/TPV), équipements informatiques et systèmes de vidéosurveillance pour entreprises clientes. Intervention terrain et diagnostic à distance.'
+        },
+      ],
+      skills: [
+        { icon: '🖥', name: 'COMPUTE HPE',    level: 4, tags: ['ProLiant', 'iLO', 'OneView', 'Gen10+']       },
+        { icon: '🌐', name: 'RÉSEAUX',        level: 4, tags: ['VLAN', 'VPN', 'Cisco', 'Firewall', 'BGP']   },
+        { icon: '🛡', name: 'CYBERSÉCURITÉ',  level: 3, tags: ['CERT', 'CVE', 'PSSI', 'Pentest']            },
+        { icon: '⚙',  name: 'SYSADMIN',       level: 4, tags: ['AD', 'GPO', 'WSUS', 'Linux', 'WS2022']     },
+        { icon: '☁',  name: 'CLOUD & STORAGE',level: 3, tags: ['HPE GreenLake', 'iSCSI', 'NAS/SAN']         },
+        { icon: '📋', name: 'PROJET IT',      level: 3, tags: ['ITIL', 'Kanban', 'Gestion risques']          },
+        { icon: '🔍', name: 'MONITORING',     level: 3, tags: ['Zabbix', 'Google Alerts', 'SIEM']           },
+        { icon: '🔧', name: 'VIRTUALISATION', level: 3, tags: ['VMware ESXi', 'Hyper-V', 'Proxmox']         },
+        { icon: '💬', name: 'LANGUES',        level: 4, tags: ['FR Natif', 'EN Full Pro', 'CN Débutant']    },
+      ],
+      education: [
+        {
+          year:   '2024 → 2026',
+          school: 'IPI — École d\'Informatique',
+          degree: 'MS Réseaux & Cybersécurité — Master en alternance (HPE)'
+        },
+        {
+          year:   '2023 → 2024',
+          school: 'ADRAR Formation',
+          degree: 'Administrateur Infrastructures Sécurisées (AIS) — Bachelor'
+        },
+        {
+          year:   '2022 → 2023',
+          school: 'ESICAD',
+          degree: 'BTS SIO option SISR — alternance Toptex'
+        },
+        {
+          year:   '2021 → 2022',
+          school: 'Lycée Henri Matisse',
+          degree: 'BTS SIO option SISR — 1ère année'
+        },
+      ],
+
+      /* ═══════════════════════════════════════════════
+         PROJETS — CONFIG DES SOURCES
+         SOURCE 1 : GitHub API (repos publics, aucune clé)
+         SOURCE 2 : JSON distant sur homelab/hébergement
+         SOURCE 3 : staticProjects ci-dessous (fallback)
+      ═══════════════════════════════════════════════ */
+      GITHUB_USERNAME: 'zerteur',   // ← votre pseudo GitHub
+      PROJECTS_JSON_URL: 'http://127.0.0.1:8000/api/projects',          // ← ex: 'https://lproudhom.fr/projects.json'
+
+      projFilter: 'all',
+      projLoading: false,
+      projError: null,
+      projLastFetch: null,
+      activeProject: null,
+      readProgress: 0,
+      currentPage: 1,
+      pageSize: 6,
+      activeTab: 0,
+      copiedBlock: null,
+      lightbox: { open: false, images: [], index: 0, caption: '' },
+
+      // Projets statiques embarqués (toujours affichés, complétés par les sources distantes)
+      staticProjects: [
+        {
+          id: 'static-homelab-1',
+          name: 'Homelab ProxmoxVE',
+          description: 'Cluster Proxmox 3 nœuds avec stockage Ceph partagé, VLAN segmenté par usage (prod / lab / DMZ) et supervision Zabbix temps réel.',
+          category: 'homelab',
+          status: 'wip',
+          tags: ['Proxmox', 'Ceph', 'VLAN', 'Zabbix', 'Debian'],
+          source: 'homelab',
+          url: null,
+          version: 'v2.3',
+          duration: '8 mois',
+          highlight: 'En production',
+          /* ─── ONGLETS RICH CONTENT ─── */
+          tabs: [
+            {
+              icon: '📋',
+              title: 'Vue d\'ensemble',
+              sections: [
+                { type: 'callout', variant: 'info', title: 'Architecture active', content: 'Ce homelab est en production active. Toutes les VMs critiques tournent sur ce cluster depuis janvier 2025.' },
+                { type: 'metrics', label: 'Chiffres clés', cols: 3, items: [
+                  { label: 'Nœuds Proxmox', value: '3', sub: 'Dell R620 / R720' },
+                  { label: 'VMs actives', value: '14', sub: 'Prod + Lab', trend: 2, trendLabel: '+2 ce mois' },
+                  { label: 'Stockage Ceph', value: '18 To', sub: 'Réplication ×3' },
+                ]},
+                { type: 'text', label: 'Description', content: 'Cluster **Proxmox VE 8.x** à 3 nœuds déployé sur matériel Dell PowerEdge récupéré. Le stockage est géré par **Ceph Reef** en réplication triplicée, garantissant la tolérance à la panne d\'un nœud complet sans interruption de service.\n\nLe réseau est segmenté en VLANs distincts via un switch Cisco géré : *prod* (VMs de services), *lab* (tests et développement), *DMZ* (services exposés), *management* (iDRAC, accès SSH).' },
+                { type: 'divider', label: 'Infrastructure' },
+                { type: 'table', label: 'Inventaire matériel', headers: ['Hôte', 'Modèle', 'CPU', 'RAM', 'Rôle'],
+                  rows: [
+                    ['pve-01', 'Dell R620', '2× Xeon E5-2650', '128 Go', 'Primary'],
+                    ['pve-02', 'Dell R720', '2× Xeon E5-2660', '96 Go', 'Secondary'],
+                    ['pve-03', 'Dell R620', '2× Xeon E5-2650', '64 Go', '<strong>OSD Ceph</strong>'],
+                  ]
+                },
+              ]
+            },
+            {
+              icon: '🌐',
+              title: 'Réseau & VLANs',
+              sections: [
+                { type: 'heading', level: 2, text: 'Segmentation réseau' },
+                { type: 'text', content: 'Chaque VLAN est associé à un bridge Proxmox (vmbr10, vmbr20, etc.) et routé via pfSense déployé sur une VM dédiée. Les règles de pare-feu inter-VLANs sont gérées via **pfSense** avec journalisation Syslog vers Graylog.' },
+                { type: 'table', label: 'Plan VLAN', headers: ['ID', 'Nom', 'Subnet', 'Passerelle', 'Usage'],
+                  rows: [
+                    ['10', 'PROD', '10.10.10.0/24', '10.10.10.1', 'Services en production'],
+                    ['20', 'LAB', '10.10.20.0/24', '10.10.20.1', 'Tests & développement'],
+                    ['30', 'DMZ', '10.10.30.0/24', '10.10.30.1', 'Services exposés (WireGuard, etc.)'],
+                    ['99', 'MGMT', '10.10.99.0/24', '10.10.99.1', 'iDRAC, switches, OOB'],
+                  ]
+                },
+                { type: 'callout', variant: 'warning', title: 'Isolation stricte', content: 'Le VLAN LAB n\'a aucun accès direct au VLAN PROD. Tout passage passe par une règle pfSense explicite et loggée.' },
+                { type: 'code', label: 'Configuration interface réseau (Proxmox)', lang: 'bash',
+                  code: `# /etc/network/interfaces — pve-01
+auto lo
+iface lo inet loopback
+
+auto eno1
+iface eno1 inet manual
+
+# Bridge principal (trunk)
+auto vmbr0
+iface vmbr0 inet static
+    address 10.10.99.10/24
+    gateway 10.10.99.1
+    bridge-ports eno1
+    bridge-stp off
+    bridge-fd 0
+
+# VLAN PROD
+auto vmbr0.10
+iface vmbr0.10 inet manual
+    vlan-raw-device vmbr0
+
+# VLAN LAB
+auto vmbr0.20
+iface vmbr0.20 inet manual
+    vlan-raw-device vmbr0`
+                },
+              ]
+            },
+            {
+              icon: '📦',
+              title: 'Stockage Ceph',
+              sections: [
+                { type: 'callout', variant: 'success', title: 'Cluster Ceph sain', content: 'HEALTH_OK — Réplication ×3 active sur 9 OSD répartis sur 3 hôtes. Aucune perte de données possible lors de la perte d\'un nœud entier.' },
+                { type: 'metrics', label: 'État du cluster', cols: 4, items: [
+                  { label: 'OSDs total', value: '9', sub: '3 par nœud' },
+                  { label: 'Pools actifs', value: '4', sub: 'rbd, cephfs, nvmeof, .mgr' },
+                  { label: 'Capacité brute', value: '54 To', sub: '18 To utilisable (×3)' },
+                  { label: 'IOPS estimées', value: '~12k', sub: 'SSD cache tier' },
+                ]},
+                { type: 'timeline', label: 'Historique du cluster', steps: [
+                  { date: 'Jan 2025', title: 'Bootstrap initial', text: 'Création du cluster Ceph avec 3 nœuds, 3 OSD HDD par nœud.' },
+                  { date: 'Fév 2025', title: 'Ajout cache SSD', text: 'Configuration d\'un BlueStore cache tier SSD sur chaque OSD HDD.' },
+                  { date: 'Mar 2025', title: 'Migration CephFS', text: 'Migration du stockage ISO et templates vers CephFS pour accès partagé.' },
+                  { date: 'Avr 2025', title: 'Monitoring Prometheus', text: 'Intégration du dashboard Ceph dans Grafana via exporter natif.' },
+                ]},
+                { type: 'code', lang: 'bash', label: 'Commandes Ceph utiles',
+                  code: `# État général du cluster
+ceph -s
+
+# Utilisation par pool
+ceph df
+
+# OSD tree (topologie)
+ceph osd tree
+
+# Performance IO en temps réel
+ceph iostat
+
+# Vérifier la réplication
+ceph osd dump | grep min_size`
+                },
+              ]
+            },
+            {
+              icon: '🔍',
+              title: 'Supervision',
+              sections: [
+                { type: 'text', label: 'Stack de monitoring', content: 'La supervision est assurée par **Zabbix 6.4** avec agents déployés sur chaque VM via Ansible. Les métriques sont collectées toutes les 30 secondes. Un dashboard Grafana agrège les données Zabbix + Prometheus (Ceph, node-exporter) en un seul pane of glass.' },
+                { type: 'list', label: 'Alertes configurées', variant: 'check', items: [
+                  'CPU > 85% pendant 5 minutes → alerte Warning',
+                  'RAM > 90% → alerte High',
+                  'Espace disque OSD < 15% → alerte Critical',
+                  'Perte de connectivité iDRAC → alerte Critical immédiate',
+                  'Service systemd down → alerte High (récupération auto)',
+                  'Certificats TLS expiration < 30 jours → alerte Info',
+                ]},
+                { type: 'callout', variant: 'info', title: 'Intégration CERT-FR', content: 'Les flux CVE du CERT-FR sont agrégés via un script Python quotidien. Chaque CVE critique sur les composants du homelab génère un ticket Gitea automatiquement.' },
+              ]
+            }
+          ]
+        },
+        {
+          id: 'static-security-1',
+          name: 'Labo Active Directory',
+          description: 'Environnement Windows Server 2022 isolé pour tester des scénarios d\'attaque/défense AD : Kerberoasting, Pass-the-Hash, GPO hardening.',
+          category: 'security',
+          status: 'done',
+          tags: ['Windows Server', 'AD', 'Kerberos', 'BloodHound', 'Pentest'],
+          source: 'homelab',
+          url: null,
+          duration: '3 mois',
+          tabs: [
+            {
+              icon: '🎯',
+              title: 'Objectifs',
+              sections: [
+                { type: 'text', label: 'Contexte', content: 'Environnement **isolé sur VLAN LAB** reproduisant une infrastructure Active Directory d\'entreprise réaliste. L\'objectif est double : apprendre les techniques d\'attaque offensives, et construire les contre-mesures défensives correspondantes.' },
+                { type: 'list', label: 'Scénarios implémentés', variant: 'check', items: [
+                  'Kerberoasting — extraction et crack de tickets TGS',
+                  'AS-REP Roasting — attaque comptes sans pré-auth Kerberos',
+                  'Pass-the-Hash — latéralisation via hash NTLM',
+                  'DCSync — dumping des credentials depuis le DC',
+                  'BloodHound — cartographie des chemins d\'attaque',
+                  'GPO Hardening — durcissement par stratégie de groupe',
+                ]},
+                { type: 'callout', variant: 'danger', title: 'Environnement isolé', content: 'Ce labo tourne exclusivement sur le VLAN LAB sans aucun accès à Internet ou au VLAN PROD. Les credentials utilisés sont fictifs.' },
+              ]
+            },
+            {
+              icon: '⚔️',
+              title: 'Techniques offensives',
+              sections: [
+                { type: 'heading', level: 2, text: 'Kerberoasting' },
+                { type: 'text', content: 'Extraction de tickets de service (TGS) pour les comptes avec SPN configuré, puis crack offline avec Hashcat. Dans ce labo, **3 comptes de service** étaient vulnérables avec des mots de passe faibles.' },
+                { type: 'code', lang: 'powershell', label: 'Extraction des tickets',
+                  code: `# Avec Impacket (depuis Kali)
+python3 GetUserSPNs.py lab.local/user:password -dc-ip 10.10.20.10 -request
+
+# Output → hashes $krb5tgs$23$ à cracker avec hashcat
+hashcat -m 13100 hashes.txt rockyou.txt --force`
+                },
+                { type: 'divider', label: 'Pass-the-Hash' },
+                { type: 'code', lang: 'bash', label: 'Latéralisation PTH',
+                  code: `# Récupération du hash NTLM via Mimikatz
+privilege::debug
+sekurlsa::logonpasswords
+
+# Utilisation du hash pour se connecter
+python3 psexec.py -hashes :aad3b435b51404eeaad3b435b51404ee:hash \\
+  lab.local/administrator@10.10.20.20`
+                },
+                { type: 'callout', variant: 'warning', title: 'Éthique', content: 'Ces techniques sont documentées à des fins éducatives dans un environnement contrôlé. Toute utilisation hors de ce contexte est illégale.' },
+              ]
+            },
+            {
+              icon: '🛡️',
+              title: 'Défenses & hardening',
+              sections: [
+                { type: 'text', label: 'GPO Hardening appliqué', content: 'Après chaque phase offensive, des mesures défensives sont implémentées et testées. L\'objectif est de mesurer concrètement la réduction de la surface d\'attaque.' },
+                { type: 'table', label: 'Contre-mesures', headers: ['Attaque', 'Contre-mesure', 'Efficacité'],
+                  rows: [
+                    ['Kerberoasting', 'Mots de passe longs (>25 chars) sur comptes de service + rotation mensuelle', '✓ Efficace'],
+                    ['AS-REP Roasting', 'Activation obligatoire pré-auth Kerberos sur tous les comptes', '✓ Bloque l\'attaque'],
+                    ['Pass-the-Hash', 'Credential Guard + Restricted Admin Mode', '~ Partiel'],
+                    ['BloodHound paths', 'Réduction des membres Domain Admins + tiering', '✓ Réduit la surface'],
+                  ]
+                },
+                { type: 'metrics', cols: 3, items: [
+                  { label: 'Chemins critiques BloodHound', value: '47 → 6', sub: 'Après hardening' },
+                  { label: 'Comptes Domain Admins', value: '12 → 3', sub: 'Principe du moindre privilège', trend: -75, trendLabel: '-75%' },
+                  { label: 'Comptes de service vulnérables', value: '0', sub: 'Kerberoasting éliminé', trend: -100, trendLabel: '-100%' },
+                ]},
+              ]
+            },
+          ]
+        },
+        {
+          id: 'static-network-1',
+          name: 'VPN Site-to-Site WireGuard',
+          description: 'Tunnel WireGuard entre le homelab et un VPS OVH, routage split-tunnel, DNS over WireGuard avec Unbound.',
+          category: 'network',
+          status: 'done',
+          tags: ['WireGuard', 'VPS', 'OVH', 'Unbound', 'Linux'],
+          source: 'homelab',
+          url: null,
+          tabs: [
+            {
+              icon: '🗺️',
+              title: 'Architecture',
+              sections: [
+                { type: 'metrics', cols: 3, items: [
+                  { label: 'Latence tunnel', value: '12 ms', sub: 'Homelab → OVH Strasbourg' },
+                  { label: 'Débit mesuré', value: '480 Mbps', sub: 'iperf3 aller-retour' },
+                  { label: 'Uptime', value: '99.8%', sub: '30 derniers jours', trend: 1, trendLabel: '↑ stable' },
+                ]},
+                { type: 'text', label: 'Principe', content: 'Tunnel **WireGuard** en mode site-to-site entre le homelab (VLAN DMZ) et un VPS OVH Debian 12. Le split-tunnel permet de router uniquement le trafic spécifique (services homelab, DNS interne) via le tunnel, le reste sortant en direct.' },
+                { type: 'callout', variant: 'success', title: 'DNS privé', content: 'Unbound résout en interne les domaines *.lab.local sur le homelab, tandis que les domaines publics passent par les résolveurs DoT de Cloudflare (1.1.1.1) en validant DNSSEC.' },
+              ]
+            },
+            {
+              icon: '⚙️',
+              title: 'Configuration',
+              sections: [
+                { type: 'code', lang: 'ini', label: 'WireGuard — côté homelab (wg0.conf)',
+                  code: `[Interface]
+Address = 10.10.30.1/24
+PrivateKey = <HOMELAB_PRIVATE_KEY>
+ListenPort = 51820
+PostUp = iptables -A FORWARD -i wg0 -j ACCEPT
+PostDown = iptables -D FORWARD -i wg0 -j ACCEPT
+
+[Peer]
+# VPS OVH
+PublicKey = <VPS_PUBLIC_KEY>
+Endpoint = vps.example.com:51820
+AllowedIPs = 10.10.30.2/32, 10.200.0.0/24
+PersistentKeepalive = 25`
+                },
+                { type: 'code', lang: 'ini', label: 'WireGuard — côté VPS',
+                  code: `[Interface]
+Address = 10.10.30.2/24
+PrivateKey = <VPS_PRIVATE_KEY>
+ListenPort = 51820
+
+[Peer]
+# Homelab
+PublicKey = <HOMELAB_PUBLIC_KEY>
+AllowedIPs = 10.10.10.0/24, 10.10.20.0/24, 10.10.30.1/32
+PersistentKeepalive = 25`
+                },
+                { type: 'code', lang: 'bash', label: 'Unbound — DNS récursif validant',
+                  code: `# /etc/unbound/unbound.conf (extrait)
+server:
+    interface: 10.10.30.1
+    access-control: 10.10.0.0/16 allow
+    do-tcp: yes
+    prefetch: yes
+
+    # DNSSEC
+    auto-trust-anchor-file: "/var/lib/unbound/root.key"
+
+    # Forward DNS public → DoT Cloudflare
+    forward-zone:
+        name: "."
+        forward-tls-upstream: yes
+        forward-addr: 1.1.1.1@853
+        forward-addr: 1.0.0.1@853
+
+# Zone interne homelab
+auth-zone:
+    name: "lab.local"
+    zonefile: "/etc/unbound/lab.local.zone"`
+                },
+              ]
+            },
+          ]
+        },
+      ],
+
+      // Projets chargés dynamiquement (GitHub + JSON distant)
+      remoteProjects: [],
+    };
+  },
+
+  computed: {
+    allProjects() {
+      const remoteIds = new Set(this.remoteProjects.map(p => p.id));
+      const filtered  = this.staticProjects.filter(p => !remoteIds.has(p.id));
+      return [...filtered, ...this.remoteProjects];
+    },
+    filteredProjects() {
+      const list = this.projFilter === 'all'
+        ? this.allProjects
+        : this.allProjects.filter(p => p.category === this.projFilter);
+      return list;
+    },
+    totalPages() {
+      return Math.max(1, Math.ceil(this.filteredProjects.length / this.pageSize));
+    },
+    pagedProjects() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      return this.filteredProjects.slice(start, start + this.pageSize);
+    },
+    pageRange() {
+      const total = this.totalPages;
+      const cur   = this.currentPage;
+      if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+      const pages = [];
+      if (cur > 3) { pages.push(1); if (cur > 4) pages.push('…'); }
+      for (let i = Math.max(1, cur - 2); i <= Math.min(total, cur + 2); i++) pages.push(i);
+      if (cur < total - 2) { if (cur < total - 3) pages.push('…'); pages.push(total); }
+      return pages;
+    },
+    activeTabs() {
+      if (!this.activeProject) return [];
+      return this.activeProject.tabs || [];
+    },
+    activePageSections() {
+      const tabs = this.activeTabs;
+      if (!tabs.length) return [];
+      return (tabs[this.activeTab] || tabs[0])?.sections || [];
+    },
+    activeIndex() {
+      if (!this.activeProject) return -1;
+      return this.filteredProjects.findIndex(p => p.id === this.activeProject.id);
+    },
+    prevProjectName() {
+      const i = this.activeIndex;
+      return i > 0 ? this.filteredProjects[i - 1].name : null;
+    },
+    nextProjectName() {
+      const i = this.activeIndex;
+      return i >= 0 && i < this.filteredProjects.length - 1
+        ? this.filteredProjects[i + 1].name : null;
+    },
+  },
+
+  watch: {
+    projFilter() {
+      this.currentPage = 1;
+    },
+  },
+
+  methods: {
+    /* ── PAGINATION ── */
+    goToPage(n) {
+      this.currentPage = Math.max(1, Math.min(n, this.totalPages));
+      document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
+    },
+
+    /* ── TABS ── */
+    setTab(i) {
+      this.activeTab = i;
+      const el = document.querySelector('.proj-page');
+      if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+
+    /* ── LIGHTBOX ── */
+    openLightbox(images, index, caption) {
+      this.lightbox = { open: true, images, index, caption: caption || '' };
+    },
+    closeLightbox() {
+      this.lightbox.open = false;
+    },
+    lbNav(dir) {
+      const max = this.lightbox.images.length - 1;
+      this.lightbox.index = Math.max(0, Math.min(this.lightbox.index + dir, max));
+    },
+
+    /* ── CODE COPY ── */
+    copyCode(code, blockId) {
+      navigator.clipboard.writeText(code).then(() => {
+        this.copiedBlock = blockId;
+        setTimeout(() => { this.copiedBlock = null; }, 1800);
+      });
+    },
+
+    /* ── RENDER TEXT (gras **x** et italique *x*) ── */
+    renderText(text) {
+      if (!text) return '';
+      return text
+        .split('\n')
+        .map(line => {
+          line = line
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.+?)\*/g, '<em>$1</em>');
+          return line ? `<p>${line}</p>` : '<br>';
+        })
+        .join('');
+    },
+
+    /* ── CALLOUT ICONS ── */
+    calloutIcon(variant) {
+      return { info: 'ℹ', warning: '⚠', success: '✓', danger: '⚡' }[variant] || 'ℹ';
+    },
+
+    /* ── PAGE PROJET ── */
+    openProject(p) {
+      this.activeProject = p;
+      this.activeTab = 0;
+      document.body.style.overflow = 'hidden';
+      this.readProgress = 0;
+      this.$nextTick(() => {
+        const el = document.querySelector('.proj-page');
+        if (el) el.addEventListener('scroll', this._onProjScroll);
+      });
+    },
+
+    closeProject() {
+      const el = document.querySelector('.proj-page');
+      if (el) el.removeEventListener('scroll', this._onProjScroll);
+      this.activeProject = null;
+      document.body.style.overflow = '';
+    },
+
+    navProject(dir) {
+      const i = this.activeIndex + dir;
+      if (i >= 0 && i < this.filteredProjects.length) {
+        const el = document.querySelector('.proj-page');
+        if (el) el.removeEventListener('scroll', this._onProjScroll);
+        this.activeProject = this.filteredProjects[i];
+        this.activeTab = 0;
+        this.readProgress = 0;
+        this.$nextTick(() => {
+          const newEl = document.querySelector('.proj-page');
+          if (newEl) {
+            newEl.scrollTop = 0;
+            newEl.addEventListener('scroll', this._onProjScroll);
+          }
+        });
+      }
+    },
+
+    _onProjScroll(e) {
+      const el = e.target;
+      const scrollable = el.scrollHeight - el.clientHeight;
+      this.readProgress = scrollable > 0
+        ? Math.round((el.scrollTop / scrollable) * 100) : 100;
+    },
+
+    hasLinks(p) {
+      return p.url || (p.links && p.links.length);
+    },
+
+    formatDate(d) {
+      if (!d) return '';
+      try {
+        return new Date(d).toLocaleDateString('fr-FR', {
+          day: '2-digit', month: '2-digit', year: 'numeric'
+        });
+      } catch { return d; }
+    },
+    /* ──────────────────────────────────────────────────
+       CHARGEMENT DES PROJETS DISTANTS
+    ────────────────────────────────────────────────── */
+    async loadProjects() {
+      this.projLoading = true;
+      this.projError   = null;
+      const gathered   = [];
+
+      // ── SOURCE 1 : GitHub API ───────────────────────
+      if (this.GITHUB_USERNAME) {
+        try {
+          const res  = await fetch(
+            `https://api.github.com/users/${this.GITHUB_USERNAME}/repos?per_page=100&sort=updated`,
+            { headers: { Accept: 'application/vnd.github+json' } }
+          );
+          if (res.ok) {
+            const repos = await res.json();
+            repos
+              .filter(r => !r.fork && !r.private)
+              .forEach(r => {
+                gathered.push({
+                  id:          `gh-${r.id}`,
+                  name:        r.name,
+                  description: r.description || 'Dépôt GitHub — aucune description.',
+                  category:    this.guessCategory(r.topics || [], r.name, r.description),
+                  status:      r.archived ? 'paused' : (r.open_issues_count > 0 ? 'wip' : 'done'),
+                  tags:        (r.topics || []).slice(0, 6).concat(r.language ? [r.language] : []),
+                  source:      'github',
+                  url:         r.html_url,
+                  updatedAt:   r.updated_at,
+                });
+              });
+          }
+        } catch (e) {
+          console.warn('GitHub fetch failed:', e);
+        }
+      }
+
+      // ── SOURCE 2 : JSON distant (homelab / hébergement perso) ──
+// ── SOURCE 2 : JSON distant (homelab / hébergement perso) ──
+      if (this.PROJECTS_JSON_URL) {
+        try {
+          const res  = await fetch(this.PROJECTS_JSON_URL);
+          if (res.ok) {
+            const responseData = await res.json();
+
+            // CORRECTION ICI : On cherche responseData.data (format de ta V3 FastAPI)
+            const list = Array.isArray(responseData) ? responseData : (responseData.data || responseData.projects || []);
+
+            list.forEach(p => {
+              gathered.push({
+                id:          p.id          || `json-${Math.random().toString(36).slice(2)}`,
+                name:        p.name        || 'Projet sans nom',
+                description: p.description || '',
+                category:    p.category    || 'homelab',
+                status:      p.status      || 'done',
+                tags:        p.tags        || [],
+                tech:        p.tech        || [],
+                source:      p.source      || 'json',
+                url:         p.url         || null,
+                updatedAt:   p.updatedAt   || null,
+                // Nouvelles variables de la v6 :
+                tabs:        p.tabs        || [],
+                highlight:   p.highlight   || null,
+                version:     p.version     || null,
+                duration:    p.duration    || null,
+                team:        p.team        || null
+              });
+            });
+          }
+        } catch (e) {
+          console.warn('JSON distant fetch failed:', e);
+          this.projError = 'Impossible de joindre l\'API backend';
+        }
+      }
+
+      this.remoteProjects = gathered;
+      this.projLoading    = false;
+      this.projLastFetch  = new Date().toLocaleString('fr-FR', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    },
+
+    /* ──────────────────────────────────────────────────
+       HELPERS
+    ────────────────────────────────────────────────── */
+    guessCategory(topics, name, desc) {
+      const all = [...topics, name, desc || ''].join(' ').toLowerCase();
+      if (/proxmox|homelab|esxi|hyper-v|nas|truenas|server|pve/.test(all)) return 'homelab';
+      if (/pentest|ctf|security|vuln|hack|kali|metasploit|burp|nmap/.test(all)) return 'security';
+      if (/cisco|vlan|bgp|ospf|firewall|vpn|wireguard|network|routeur/.test(all)) return 'network';
+      return 'dev';
+    },
+
+    statusLabel(s) {
+      return { wip: 'En cours', done: 'Terminé', paused: 'Pausé' }[s] || s;
+    },
+
+    sourceIcon(s) {
+      return { github: '⌥', homelab: '⌬', json: '◈' }[s] || '◆';
+    },
+
+    typeIcon(cat) {
+      return { homelab: '🖥', dev: '⌨', security: '🛡', network: '🌐' }[cat] || '◆';
+    },
+  },
+
+  mounted() {
+    this.loadProjects();
+    window.addEventListener('keydown', e => {
+      if (this.lightbox.open) {
+        if (e.key === 'Escape')     this.closeLightbox();
+        if (e.key === 'ArrowRight') this.lbNav(1);
+        if (e.key === 'ArrowLeft')  this.lbNav(-1);
+        return;
+      }
+      if (!this.activeProject) return;
+      if (e.key === 'Escape')      this.closeProject();
+      if (e.key === 'ArrowRight')  this.navProject(1);
+      if (e.key === 'ArrowLeft')   this.navProject(-1);
+    });
+  },
+}).mount('#app');
+</script>
+</body>
+</html>
