@@ -902,11 +902,13 @@
         <div class="proj-page-progress" :style="{ width: readProgress + '%' }"></div>
 
         <!-- TOPBAR -->
-        <div class="proj-page-topbar">
-          <button class="proj-page-back" @click="closeProject">← <span>Projets</span></button>
+<div class="proj-page-topbar">
+          <button class="proj-page-back" @click="closeProject" aria-label="Retour aux projets">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span>Retour</span>
+          </button>
 
           <div class="proj-page-topbar-center">
-            <!-- breadcrumb -->
             <div class="proj-breadcrumb">
               <span>Projets</span>
               <span class="proj-breadcrumb-sep">/</span>
@@ -916,13 +918,11 @@
                 <span class="proj-breadcrumb-current">{{ activeTabs[activeTab]?.title }}</span>
               </template>
             </div>
-            <!-- progress ring -->
             <svg class="proj-progress-ring" viewBox="0 0 28 28" aria-hidden="true">
               <circle class="track" cx="14" cy="14" r="12"/>
               <circle class="fill" cx="14" cy="14" r="12"
                 :stroke-dashoffset="75.4 - (75.4 * readProgress / 100)"/>
             </svg>
-            <!-- reading time -->
             <span class="proj-reading-time">⏱ {{ readingTime }} min</span>
           </div>
 
