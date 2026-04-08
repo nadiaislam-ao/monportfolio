@@ -124,114 +124,217 @@
   .section-title { font-family:var(--display); font-size:clamp(2rem,5vw,4rem); letter-spacing:.05em; line-height:1; color:var(--paper); text-wrap: balance; }
   .section-title::after { content:''; display:block; width:2.5rem; height:1px; margin-top:.6rem; background:linear-gradient(90deg,var(--silver),transparent); opacity:.5; }
 
-  /* ── TICKER ── */
-/* ── TICKER (CYBERPUNK OVERDRIVE) ── */
-  .ticker {
-    /* Définition du vert terminal pour ce composant */
-    --neon-green: #00ff66; 
-    --scanline: rgba(0, 255, 102, 0.04);
+/* ──────────────────────────────────────────────────────────────────
+   TICKER : CYBERPUNK QUANTUM GLITCH ENGINE v2.0 (ULTIMATE)
+   Animations CSS extrêmes – Zéro JS – 100% Plug & Play HTML
+   ────────────────────────────────────────────────────────────────── */
 
-    width: 100%;
-    overflow: hidden;
-    position: relative;
-    padding: 1.5rem 0;
-    
-    /* Grille réseau en mouvement continu */
-    background-color: var(--ink);
-    background-image: 
-      linear-gradient(0deg, transparent 24%, var(--scanline) 25%, var(--scanline) 26%, transparent 27%, transparent 74%, var(--scanline) 75%, var(--scanline) 76%, transparent 77%, transparent), 
-      linear-gradient(90deg, transparent 24%, var(--scanline) 25%, var(--scanline) 26%, transparent 27%, transparent 74%, var(--scanline) 75%, var(--scanline) 76%, transparent 77%, transparent);
-    background-size: 30px 30px;
-    animation: grid-move 15s linear infinite;
+:root {
+  --neon-core: #00ff66;
+  --neon-pulse: #b3ffcc;
+  --glitch-red: #ff003c;
+  --glitch-blue: #00e5ff;
+  --deep-void: #03060a;
+  --ticker-speed: 40s;
+}
 
-    /* Bordures lumineuses */
-    border-top: 1px solid rgba(0, 255, 102, 0.15);
-    border-bottom: 1px solid rgba(0, 255, 102, 0.15);
-    box-shadow: inset 0 0 20px rgba(0, 255, 102, 0.05);
+.ticker {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 2rem 0;
+  background-color: var(--deep-void);
+  
+  /* Tubes néon physiques en haut et en bas */
+  border-top: 1px solid rgba(0, 255, 102, 0.3);
+  border-bottom: 1px solid rgba(0, 255, 102, 0.3);
+  box-shadow: 
+    inset 0 0 50px rgba(0, 255, 102, 0.05),
+    0 -2px 15px rgba(0, 255, 102, 0.1),
+    0 2px 15px rgba(0, 255, 102, 0.1);
+  
+  isolation: isolate;
+}
+
+/* ─── FOND : HOLOGRAPHIC GRID & SCANLINES ─── */
+.ticker::before {
+  content: '';
+  position: absolute;
+  inset: -50%; /* Dépassement pour la rotation 3D */
+  z-index: 0;
+  
+  background-image: 
+    /* Scanlines horizontales denses */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 102, 0.03) 3px,
+      transparent 4px
+    ),
+    /* Grille de données radar */
+    linear-gradient(0deg, transparent 24%, rgba(0, 255, 102, 0.05) 25%, rgba(0, 255, 102, 0.1) 26%, transparent 27%, transparent 74%, rgba(0, 255, 102, 0.05) 75%, rgba(0, 255, 102, 0.1) 76%, transparent 77%),
+    linear-gradient(90deg, transparent 24%, rgba(0, 255, 102, 0.04) 25%, rgba(0, 255, 102, 0.08) 26%, transparent 27%, transparent 74%, rgba(0, 255, 102, 0.04) 75%, rgba(0, 255, 102, 0.08) 76%, transparent 77%);
+  
+  background-size: 100% 6px, 40px 40px, 40px 40px;
+  background-position: center;
+  
+  /* L'effet d'optique ultime : on fond la grille dans le noir sur les bords */
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at center, black 10%, transparent 70%);
+  mask-image: radial-gradient(ellipse 60% 50% at center, black 10%, transparent 70%);
+
+  /* Distorsion spatio-temporelle lente */
+  animation: radar-warp 20s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate;
+  pointer-events: none;
+}
+
+/* ─── CONTENEUR : LE DÉFILEMENT STUTTER ─── */
+.ticker-inner {
+  display: flex;
+  width: max-content;
+  position: relative;
+  z-index: 3;
+  /* Mix de défilement fluide et de micro-saccades */
+  animation: engine-scroll var(--ticker-speed) linear infinite;
+  will-change: transform;
+}
+
+.ticker-inner:hover {
+  animation-play-state: paused;
+}
+
+/* ─── TEXTE : DONNÉES EN ATTENTE ─── */
+.ticker-inner > span {
+  display: flex;
+  gap: 5rem;
+  padding-right: 5rem;
+}
+
+.ticker-inner > span > span {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(196, 202, 210, 0.25);
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: crosshair;
+}
+
+/* ─── TEXTE : OVERDRIVE (SURVOL) ─── */
+.ticker-inner > span > span:hover {
+  color: var(--neon-core);
+  letter-spacing: 0.6em;
+  transform: scale(1.1) translateY(-2px);
+  
+  /* L'effet Glitch agressif sans changer le HTML */
+  animation: text-glitch-storm 0.4s infinite;
+  z-index: 10;
+}
+
+/* ─── LE CURSEUR TERMINAL (`::after`) ─── */
+.ticker-inner > span > span::after {
+  content: '█';
+  color: var(--neon-core);
+  font-size: 0.7rem;
+  margin-left: 3rem; /* Espace fixe pour ne pas trembler avec le letter-spacing */
+  opacity: 0.15;
+  transform: translateY(1px);
+  animation: cursor-idle 1.5s step-end infinite;
+  transition: all 0.3s ease;
+}
+
+.ticker-inner > span > span:hover::after {
+  /* Le curseur pète un câble au survol */
+  margin-left: 0.5rem;
+  transform: scale(1.4) translateY(-2px);
+  animation: cursor-overload 0.15s infinite;
+  color: var(--neon-pulse);
+  text-shadow: 0 0 15px var(--neon-core), 0 0 30px white;
+}
+
+/* ═══════════════════════════════════════════════════════
+   KEYFRAMES ENGINE
+═══════════════════════════════════════════════════════ */
+
+/* 1. Distorsion de la grille arrière */
+@keyframes radar-warp {
+  0%   { transform: rotateX(10deg) rotateZ(0deg) scale(1); }
+  50%  { transform: rotateX(15deg) rotateZ(1deg) scale(1.05); }
+  100% { transform: rotateX(5deg) rotateZ(-1deg) scale(1.1); }
+}
+
+/* 2. Scroll avec anomalies quantiques (micro-sauts) */
+@keyframes engine-scroll {
+  0%   { transform: translateX(0); }
+  24%  { transform: translateX(-24%); }
+  24.5%{ transform: translateX(-24.5%); filter: blur(2px); } /* Saccade */
+  25%  { transform: translateX(-25%); filter: blur(0); }
+  74%  { transform: translateX(-74%); }
+  74.5%{ transform: translateX(-74.5%); filter: blur(2px) hue-rotate(90deg); } /* Saccade + Glitch couleur */
+  75%  { transform: translateX(-75%); filter: blur(0) hue-rotate(0); }
+  100% { transform: translateX(-50%); } /* Doit finir à -50% pour la boucle parfaite avec 2 blocs */
+}
+
+/* 3. Glitch Chromatique Absolu (Sur le texte) */
+@keyframes text-glitch-storm {
+  0% {
+    text-shadow: 0 0 10px var(--neon-core);
+    transform: scale(1.1) skewX(0deg);
   }
-
-  /* Effet "Vignette" : le texte disparait doucement sur les bords de l'écran */
-  .ticker::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, var(--ink) 0%, transparent 15%, transparent 85%, var(--ink) 100%);
-    z-index: 2;
-    pointer-events: none;
+  20% {
+    text-shadow: -4px 0 var(--glitch-red), 4px 0 var(--glitch-blue), 0 0 20px var(--neon-core);
+    transform: scale(1.1) skewX(-15deg);
   }
-
-  .ticker-inner {
-    display: flex;
-    width: max-content;
-    animation: ticker 35s linear infinite;
+  21% {
+    text-shadow: 0 0 10px var(--neon-core);
+    transform: scale(1.1) skewX(0deg);
   }
-
-  .ticker-inner:hover {
-    animation-play-state: paused;
+  40% {
+    text-shadow: 3px -2px var(--glitch-red), -3px 2px var(--glitch-blue), 0 0 15px white;
   }
-
-  .ticker-inner > span {
-    display: flex;
-    gap: 4rem; /* Espacement un peu plus large pour respirer */
-    padding-right: 4rem;
+  60% {
+    text-shadow: -2px 2px var(--glitch-blue), 2px -2px var(--glitch-red);
+    transform: scale(1.12) skewX(10deg);
   }
-
-  .ticker-inner > span > span {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: rgba(196, 202, 210, 0.4); /* Gris très effacé de base */
-    display: flex;
-    align-items: center;
-    gap: 4rem;
-    white-space: nowrap;
-    
-    /* Transition très élastique (cubic-bezier) pour le hover */
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    cursor: crosshair;
+  61% {
+    text-shadow: 0 0 10px var(--neon-core);
+    transform: scale(1.1) skewX(0deg);
   }
-
-  /* SURVOL : Explosion visuelle & Aberration chromatique */
-  .ticker-inner > span > span:hover {
-    color: var(--neon-green);
-    letter-spacing: 0.45em; /* Le mot s'étire */
-    transform: scale(1.05) translateY(-2px);
-    
-    /* Effet Glitch 3D (Rouge à gauche, Bleu à droite, Glow Vert au centre) */
-    text-shadow: 
-      0 0 10px rgba(0, 255, 102, 0.6),
-      0 0 20px rgba(0, 255, 102, 0.4),
-      -3px 0 0 rgba(255, 0, 50, 0.6),
-      3px 0 0 rgba(0, 150, 255, 0.6);
+  80% {
+    text-shadow: 5px 0 var(--glitch-red), -5px 0 var(--glitch-blue);
+    opacity: 0.8;
   }
-
-  /* Remplacement du losange par un curseur terminal clignotant */
-  .ticker-inner > span > span::after {
-    content: '█';
-    color: var(--neon-green);
-    font-size: 0.65rem;
-    opacity: 0.15;
-    animation: terminal-blink 1.2s step-end infinite;
-    transition: all 0.3s ease;
-  }
-
-  .ticker-inner > span > span:hover::after {
+  100% {
+    text-shadow: 0 0 10px var(--neon-core);
     opacity: 1;
-    text-shadow: 0 0 15px var(--neon-green);
-    transform: scale(1.2);
   }
+}
 
-  /* ── NOUVELLES ANIMATIONS DU TICKER ── */
-  @keyframes terminal-blink {
-    0%, 100% { opacity: 0.1; }
-    50% { opacity: 0.8; }
-  }
+/* 4. Curseur au repos */
+@keyframes cursor-idle {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.4; box-shadow: 0 0 5px var(--neon-core); }
+}
 
-  @keyframes grid-move {
-    0% { background-position: 0 0; }
-    100% { background-position: 30px 30px; }
+/* 5. Curseur en surcharge électrique */
+@keyframes cursor-overload {
+  0%   { opacity: 1; transform: scale(1.4) translateY(-2px) skewX(0); }
+  25%  { opacity: 0.4; transform: scale(1.2) translateY(0px) skewX(-20deg); }
+  50%  { opacity: 0.9; transform: scale(1.5) translateY(-3px) skewX(20deg); }
+  75%  { opacity: 0.2; transform: scale(1.1) translateY(1px) skewX(0); }
+  100% { opacity: 1; transform: scale(1.4) translateY(-2px) skewX(0); }
+}
+
+/* Mode safe pour l'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .ticker::before, .ticker-inner, .ticker-inner > span > span:hover, .ticker-inner > span > span::after {
+    animation: none !important;
   }
+}
 
   /* ── ABOUT ── */
   .about-grid { display:grid; grid-template-columns:3fr 2fr; gap:4rem; align-items:start; }
