@@ -125,47 +125,82 @@
   .section-title::after { content:''; display:block; width:2.5rem; height:1px; margin-top:.6rem; background:linear-gradient(90deg,var(--silver),transparent); opacity:.5; }
 
 /* ──────────────────────────────────────────────────────────────────
-     TICKER : TACTILE SAGE & BEIGE (ORGANIC EDITORIAL)
+     TICKER : SAGE & BEIGE (THE MASTERPIECE TEXTURE ENGINE)
      ────────────────────────────────────────────────────────────────── */
 
-  .ticker {
-    /* Palette Botanique & Papier (Sage Green + Beige) */
-    --paper-raw:   #f4f2ec; /* Beige fond de toile */
-    --paper-shade: #e8e4d9; /* Beige ombré */
-    --sage-ink:    #2b3326; /* Kaki très sombre (Encre) */
-    --sage-base:   #5c6b51; /* Kaki franc */
-    --sage-soft:   #8b9c7d; /* Sage pastel */
-    --sage-wash:   #c9d4c0; /* Vert d'eau / Kaki très clair */
+  :root {
+    /* Palette Organique : Beiges bruts et Kakis profonds */
+    --paper-raw:   #e8e4d9; /* Beige parchemin */
+    --paper-wet:   #d8d3c5; /* Beige humide / sombre */
+    --sage-ink:    #2b3326; /* Kaki presque noir (Encre) */
+    --sage-mid:    #5c6b51; /* Kaki classique */
+    --sage-light:  #8b9c7d; /* Kaki pastel / Vert d'eau */
+    
+    /* Métaux */
+    --metal-dark:  #9e9a83; /* Laiton vieilli */
+    --metal-light: #f7f5ef; /* Éclat métallique */
+    
+    /* Lumière solaire */
+    --sun-warmth:  rgba(255, 245, 225, 0.4);
+  }
 
+  .ticker {
     position: relative;
     width: 100%;
     overflow: hidden;
-    padding: 3rem 0;
+    padding: 3.5rem 0;
+    
+    /* ── COMPOSITION UI : LE CADRE MÉTALLIQUE ── */
+    /* Bordures épaisses en haut et en bas simulant un rail en laiton */
+    border-top: 3px solid;
+    border-bottom: 3px solid;
+    border-image: linear-gradient(90deg, var(--metal-dark) 0%, var(--metal-light) 50%, var(--metal-dark) 100%) 1;
+    
+    /* ── TEXTURE 1 & 2 : PAPIER GRAINÉ + TRAME DE LIN ── */
     background-color: var(--paper-raw);
-
-    /* Lignes de structure organiques, très douces */
-    border-top: 1px solid var(--sage-wash);
-    border-bottom: 1px solid var(--sage-wash);
-
-    /* TEXTURE 1 : Grain de papier statique (Micro-pointillé) */
-    background-image: radial-gradient(var(--sage-wash) 0.5px, transparent 0.5px);
-    background-size: 14px 14px;
-    box-shadow: inset 0 0 60px rgba(92, 107, 81, 0.05);
+    background-image: 
+      /* Le reflet métallique qui glisse sur le fond */
+      linear-gradient(110deg, transparent 20%, rgba(255, 255, 255, 0.3) 40%, transparent 60%),
+      /* La trame de lin (croisement de lignes ultra-fines) */
+      repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(43, 51, 38, 0.02) 1px, rgba(43, 51, 38, 0.02) 3px),
+      repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(43, 51, 38, 0.02) 1px, rgba(43, 51, 38, 0.02) 3px),
+      /* Le grain du papier humide (micro-bruit radial) */
+      radial-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+      
+    background-size: 200% 100%, 4px 4px, 4px 4px, 6px 6px;
+    
+    /* Animation du reflet métallique sur le fond */
+    animation: metal-glare 12s ease-in-out infinite alternate;
+    
+    /* Ombre interne pour donner de la profondeur (effet caisson) */
+    box-shadow: inset 0 10px 30px rgba(43, 51, 38, 0.05), inset 0 -10px 30px rgba(43, 51, 38, 0.05);
   }
 
-  /* TEXTURE 2 : Trame de lin vivante (Micro-animation fluide) */
+  /* ── TEXTURE 3 : LE SOLEIL SUR LE TISSU (Éclairage dynamique) ── */
   .ticker::before {
     content: '';
     position: absolute;
     inset: 0;
     z-index: 1;
-    opacity: 0.6;
-    background-image: 
-      repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(139, 156, 125, 0.03) 2px, rgba(139, 156, 125, 0.03) 4px),
-      repeating-linear-gradient(-45deg, transparent, transparent 2px, rgba(139, 156, 125, 0.03) 2px, rgba(139, 156, 125, 0.03) 4px);
-    mix-blend-mode: multiply;
-    animation: organic-weave 20s ease-in-out infinite alternate;
+    background: radial-gradient(ellipse 80% 100% at 0% 50%, var(--sun-warmth) 0%, transparent 70%);
+    mix-blend-mode: overlay;
     pointer-events: none;
+    animation: sun-sweep 18s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+  }
+
+  /* ── TEXTURE 4 : L'HUMIDITÉ DU PAPIER (Taches d'eau qui s'étendent) ── */
+  .ticker::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background-image: 
+      radial-gradient(circle at 30% 20%, rgba(92, 107, 81, 0.04) 0%, transparent 50%),
+      radial-gradient(circle at 70% 80%, rgba(92, 107, 81, 0.06) 0%, transparent 40%);
+    background-size: 150% 150%;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    animation: humid-bleed 22s ease-in-out infinite alternate;
   }
 
   .ticker-inner {
@@ -173,27 +208,26 @@
     width: max-content;
     position: relative;
     z-index: 3;
-    animation: smooth-scroll 45s linear infinite;
+    animation: smooth-editorial-scroll 50s linear infinite;
     will-change: transform;
-
-    /* TEXTURE 3 : L'effacement par "Masque CSS" (CSS Masking)
-       Contrairement à un dégradé de couleur par dessus, cela rend le texte 
-       transparent sur les bords, laissant apparaître le grain du papier au travers. */
-    -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 15%, black 85%, transparent 100%);
-    mask-image: linear-gradient(90deg, transparent 0%, black 15%, black 85%, transparent 100%);
+    
+    /* CSS Masking : Les mots fondent dans le papier sur les bords, sans cacher le fond */
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
   }
 
-  /* LA SYMBIOSE ÉLÉGANTE (Profondeur de champ dynamique) */
+  /* ── L'INTERACTION SYMBIOTIQUE (Focus tactique) ── */
   .ticker:hover .ticker-inner {
     animation-play-state: paused;
   }
 
-  /* Zéro JS : Si on survole un mot, les autres reculent dans le flou */
+  /* L'encre des mots non-survolés "bave" dans le papier humide */
   .ticker:has(span > span:hover) .ticker-inner > span > span:not(:hover) {
-    color: var(--sage-wash);
-    transform: scale(0.98);
-    filter: blur(0.5px);
-    opacity: 0.6;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--sage-light);
+    filter: blur(1.5px);
+    opacity: 0.4;
+    transform: scale(0.98) translateY(2px);
   }
 
   .ticker-inner > span {
@@ -202,92 +236,101 @@
     padding-right: 5rem;
   }
 
-  /* TEXTURE 4 : L'encre sur le papier */
+  /* ── LES LETTRES : ENCRE ÉPAISSE ET GRAVURE (Letterpress) ── */
   .ticker-inner > span > span {
     position: relative;
-    font-family: var(--mono);
-    font-size: 0.85rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--sage-soft);
+    font-family: var(--serif); /* Utilisation de votre police Serif (DM Serif) pour le côté éditorial */
+    font-style: italic;
+    font-size: 1.3rem;
+    letter-spacing: 0.15em;
+    color: var(--sage-ink);
+    
     display: flex;
     align-items: center;
-    gap: 5rem;
+    gap: 4rem;
     white-space: nowrap;
-    cursor: pointer;
+    cursor: crosshair;
     
-    /* Transition hyper fluide, amortie comme une suspension */
-    transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    /* Effet de texte gravé dans le papier (Ombre claire en bas, sombre en haut) */
+    text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.7), -1px -1px 0px rgba(0, 0, 0, 0.05);
+    
+    transition: all 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
-  /* TEXTURE 5 : Le Letterpress (Débossage physique) */
+  /* Oscillation subtile naturelle pendant le défilement */
+  .ticker-inner > span > span:nth-child(even) { transform: translateY(3px); }
+  .ticker-inner > span > span:nth-child(odd) { transform: translateY(-3px); }
+
+  /* ── LE FOCUS : L'ENCRE SÈCHE ET SE SOULÈVE ── */
   .ticker-inner > span > span:hover {
+    font-family: var(--mono); /* Repasse en monospace au survol (La machine reprend le dessus) */
+    font-style: normal;
     color: var(--sage-ink);
     letter-spacing: 0.3em;
-    transform: scale(1.02);
     
-    /* Ombre interne simulée (Lumière blanche en bas, Ombre kaki en haut) 
-       Cela donne l'impression que le mot est pressé/gravé dans le papier */
+    /* Le mot sort physiquement du papier */
+    transform: scale(1.05) translateY(-5px) !important;
     text-shadow: 
-      0px 1px 0px rgba(255, 255, 255, 0.9), 
-      0px -1px 0px rgba(43, 51, 38, 0.15);
+      0px 5px 15px rgba(43, 51, 38, 0.2), /* Ombre portée douce */
+      -1px -1px 0px rgba(255, 255, 255, 0.8); /* Reflet de la tranche */
   }
 
-  /* LE SÉPARATEUR : La perle organique respirante */
+  /* ── LE SÉPARATEUR : BOUSSOLE / SOLEIL EN ROTATION ── */
   .ticker-inner > span > span::after {
-    content: '●'; /* Un point parfaitement rond au lieu du losange */
-    font-size: 0.45rem;
-    color: var(--sage-wash);
-    margin-left: 2rem; 
+    content: '✧';
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    font-style: normal;
+    color: var(--metal-dark);
+    text-shadow: none;
+    margin-left: 2.5rem;
     
-    /* Micro-animation de respiration infinie */
-    animation: botanic-breath 4s ease-in-out infinite;
+    /* Animation de rotation continue ultra lente */
+    animation: celestial-spin 12s linear infinite;
     transition: all 0.4s ease;
   }
 
   .ticker-inner > span > span:hover::after {
-    color: var(--sage-base);
+    color: var(--sage-mid);
+    transform: scale(1.5) rotate(90deg);
     animation-play-state: paused;
-    transform: scale(1.2);
   }
 
   /* ═══════════════════════════════════════════════════════
-     KEYFRAMES ORGANIQUES
+     KEYFRAMES DES TEXTURES & ÉLÉMENTS NATURELS
   ═══════════════════════════════════════════════════════ */
 
-  @keyframes smooth-scroll {
+  /* Le balayage du reflet sur le rail métallique et le fond */
+  @keyframes metal-glare {
+    0%   { background-position: -100% 0, 0 0, 0 0, 0 0; }
+    100% { background-position: 200% 0, 0 0, 0 0, 0 0; }
+  }
+
+  /* Le soleil qui passe sur le tissu */
+  @keyframes sun-sweep {
+    0%   { background-position: 0% 50%; opacity: 0.3; }
+    50%  { opacity: 0.8; }
+    100% { background-position: 100% 50%; opacity: 0.4; }
+  }
+
+  /* La capillarité de l'eau dans le papier */
+  @keyframes humid-bleed {
+    0%   { background-position: 0% 0%; opacity: 0.5; }
+    50%  { background-position: 10% 5%; opacity: 0.8; }
+    100% { background-position: -5% 10%; opacity: 0.6; }
+  }
+
+  /* Rotation du séparateur */
+  @keyframes celestial-spin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Scroll parfait sans saccade */
+  @keyframes smooth-editorial-scroll {
     0%   { transform: translateX(0); }
     100% { transform: translateX(-50%); }
   }
-
-  /* Fait glisser doucement la trame de lin en arrière-plan */
-  @keyframes organic-weave {
-    0% {
-      background-position: 0px 0px, 0px 0px;
-      opacity: 0.5;
-    }
-    50% {
-      opacity: 0.7; /* Légère variation de luminosité */
-    }
-    100% {
-      background-position: 10px 10px, -10px -10px;
-      opacity: 0.5;
-    }
-  }
-
-  /* Fait respirer les points de séparation */
-  @keyframes botanic-breath {
-    0%, 100% { 
-      transform: scale(1); 
-      opacity: 0.5;
-    }
-    50% { 
-      transform: scale(1.3); 
-      opacity: 1;
-      filter: drop-shadow(0 0 2px rgba(201, 212, 192, 0.8));
-    }
-  }
-
   /* ── ABOUT ── */
   .about-grid { display:grid; grid-template-columns:3fr 2fr; gap:4rem; align-items:start; }
   .about-text p { font-size:.85rem; line-height:1.9; color:var(--concrete); margin-bottom:1.2rem; }
