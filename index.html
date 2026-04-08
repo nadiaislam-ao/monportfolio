@@ -124,6 +124,59 @@
   .section-title { font-family:var(--display); font-size:clamp(2rem,5vw,4rem); letter-spacing:.05em; line-height:1; color:var(--paper); text-wrap: balance; }
   .section-title::after { content:''; display:block; width:2.5rem; height:1px; margin-top:.6rem; background:linear-gradient(90deg,var(--silver),transparent); opacity:.5; }
 
+  /* ── TICKER ── */
+  .ticker {
+    width: 100%;
+    overflow: hidden;
+    border-top: 1px solid rgba(196, 202, 210, 0.05);
+    border-bottom: 1px solid rgba(196, 202, 210, 0.05);
+    padding: 1.5rem 0;
+    background: rgba(196, 202, 210, 0.01);
+  }
+  
+  .ticker-inner {
+    display: flex;
+    width: max-content;
+    animation: ticker 35s linear infinite;
+  }
+  
+  /* Optionnel : met l'animation en pause au survol de la souris */
+  .ticker-inner:hover {
+    animation-play-state: paused;
+  }
+  
+  .ticker-inner > span {
+    display: flex;
+    gap: 3rem;
+    padding-right: 3rem; /* Assure la continuité parfaite de la boucle */
+  }
+  
+  .ticker-inner > span > span {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--silver-dim);
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+  }
+  
+  .ticker-inner > span > span:hover {
+    color: var(--silver-bright);
+    cursor: default;
+  }
+  
+  /* Le petit losange décoratif entre chaque mot */
+  .ticker-inner > span > span::after {
+    content: '◆';
+    color: var(--rust);
+    opacity: 0.5;
+    font-size: 0.5rem;
+  }
+
   /* ── ABOUT ── */
   .about-grid { display:grid; grid-template-columns:3fr 2fr; gap:4rem; align-items:start; }
   .about-text p { font-size:.85rem; line-height:1.9; color:var(--concrete); margin-bottom:1.2rem; }
