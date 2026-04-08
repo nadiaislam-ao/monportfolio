@@ -125,216 +125,148 @@
   .section-title::after { content:''; display:block; width:2.5rem; height:1px; margin-top:.6rem; background:linear-gradient(90deg,var(--silver),transparent); opacity:.5; }
 
 /* ──────────────────────────────────────────────────────────────────
-   TICKER : CYBERPUNK QUANTUM GLITCH ENGINE v2.0 (ULTIMATE)
-   Animations CSS extrêmes – Zéro JS – 100% Plug & Play HTML
-   ────────────────────────────────────────────────────────────────── */
+     TICKER : NEO-BRUTALISM & SMOOTH ENGINEERING
+     ────────────────────────────────────────────────────────────────── */
 
-:root {
-  --neon-core: #00ff66;
-  --neon-pulse: #b3ffcc;
-  --glitch-red: #ff003c;
-  --glitch-blue: #00e5ff;
-  --deep-void: #03060a;
-  --ticker-speed: 40s;
-}
-
-.ticker {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  padding: 2rem 0;
-  background-color: var(--deep-void);
-  
-  /* Tubes néon physiques en haut et en bas */
-  border-top: 1px solid rgba(0, 255, 102, 0.3);
-  border-bottom: 1px solid rgba(0, 255, 102, 0.3);
-  box-shadow: 
-    inset 0 0 50px rgba(0, 255, 102, 0.05),
-    0 -2px 15px rgba(0, 255, 102, 0.1),
-    0 2px 15px rgba(0, 255, 102, 0.1);
-  
-  isolation: isolate;
-}
-
-/* ─── FOND : HOLOGRAPHIC GRID & SCANLINES ─── */
-.ticker::before {
-  content: '';
-  position: absolute;
-  inset: -50%; /* Dépassement pour la rotation 3D */
-  z-index: 0;
-  
-  background-image: 
-    /* Scanlines horizontales denses */
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 255, 102, 0.03) 3px,
-      transparent 4px
-    ),
-    /* Grille de données radar */
-    linear-gradient(0deg, transparent 24%, rgba(0, 255, 102, 0.05) 25%, rgba(0, 255, 102, 0.1) 26%, transparent 27%, transparent 74%, rgba(0, 255, 102, 0.05) 75%, rgba(0, 255, 102, 0.1) 76%, transparent 77%),
-    linear-gradient(90deg, transparent 24%, rgba(0, 255, 102, 0.04) 25%, rgba(0, 255, 102, 0.08) 26%, transparent 27%, transparent 74%, rgba(0, 255, 102, 0.04) 75%, rgba(0, 255, 102, 0.08) 76%, transparent 77%);
-  
-  background-size: 100% 6px, 40px 40px, 40px 40px;
-  background-position: center;
-  
-  /* L'effet d'optique ultime : on fond la grille dans le noir sur les bords */
-  -webkit-mask-image: radial-gradient(ellipse 60% 50% at center, black 10%, transparent 70%);
-  mask-image: radial-gradient(ellipse 60% 50% at center, black 10%, transparent 70%);
-
-  /* Distorsion spatio-temporelle lente */
-  animation: radar-warp 20s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate;
-  pointer-events: none;
-}
-
-/* ─── CONTENEUR : LE DÉFILEMENT STUTTER ─── */
-.ticker-inner {
-  display: flex;
-  width: max-content;
-  position: relative;
-  z-index: 3;
-  /* Mix de défilement fluide et de micro-saccades */
-  animation: engine-scroll var(--ticker-speed) linear infinite;
-  will-change: transform;
-}
-
-.ticker-inner:hover {
-  animation-play-state: paused;
-}
-
-/* ─── TEXTE : DONNÉES EN ATTENTE ─── */
-.ticker-inner > span {
-  display: flex;
-  gap: 5rem;
-  padding-right: 5rem;
-}
-
-.ticker-inner > span > span {
-  font-family: var(--mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: rgba(196, 202, 210, 0.25);
-  display: inline-flex;
-  align-items: center;
-  white-space: nowrap;
-  
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  cursor: crosshair;
-}
-
-/* ─── TEXTE : OVERDRIVE (SURVOL) ─── */
-.ticker-inner > span > span:hover {
-  color: var(--neon-core);
-  letter-spacing: 0.6em;
-  transform: scale(1.1) translateY(-2px);
-  
-  /* L'effet Glitch agressif sans changer le HTML */
-  animation: text-glitch-storm 0.4s infinite;
-  z-index: 10;
-}
-
-/* ─── LE CURSEUR TERMINAL (`::after`) ─── */
-.ticker-inner > span > span::after {
-  content: '█';
-  color: var(--neon-core);
-  font-size: 0.7rem;
-  margin-left: 3rem; /* Espace fixe pour ne pas trembler avec le letter-spacing */
-  opacity: 0.15;
-  transform: translateY(1px);
-  animation: cursor-idle 1.5s step-end infinite;
-  transition: all 0.3s ease;
-}
-
-.ticker-inner > span > span:hover::after {
-  /* Le curseur pète un câble au survol */
-  margin-left: 0.5rem;
-  transform: scale(1.4) translateY(-2px);
-  animation: cursor-overload 0.15s infinite;
-  color: var(--neon-pulse);
-  text-shadow: 0 0 15px var(--neon-core), 0 0 30px white;
-}
-
-/* ═══════════════════════════════════════════════════════
-   KEYFRAMES ENGINE
-═══════════════════════════════════════════════════════ */
-
-/* 1. Distorsion de la grille arrière */
-@keyframes radar-warp {
-  0%   { transform: rotateX(10deg) rotateZ(0deg) scale(1); }
-  50%  { transform: rotateX(15deg) rotateZ(1deg) scale(1.05); }
-  100% { transform: rotateX(5deg) rotateZ(-1deg) scale(1.1); }
-}
-
-/* 2. Scroll avec anomalies quantiques (micro-sauts) */
-@keyframes engine-scroll {
-  0%   { transform: translateX(0); }
-  24%  { transform: translateX(-24%); }
-  24.5%{ transform: translateX(-24.5%); filter: blur(2px); } /* Saccade */
-  25%  { transform: translateX(-25%); filter: blur(0); }
-  74%  { transform: translateX(-74%); }
-  74.5%{ transform: translateX(-74.5%); filter: blur(2px) hue-rotate(90deg); } /* Saccade + Glitch couleur */
-  75%  { transform: translateX(-75%); filter: blur(0) hue-rotate(0); }
-  100% { transform: translateX(-50%); } /* Doit finir à -50% pour la boucle parfaite avec 2 blocs */
-}
-
-/* 3. Glitch Chromatique Absolu (Sur le texte) */
-@keyframes text-glitch-storm {
-  0% {
-    text-shadow: 0 0 10px var(--neon-core);
-    transform: scale(1.1) skewX(0deg);
+  :root {
+    --kaki-accent: #8e9a78; /* Vert Kaki industriel / Sage Green */
+    --brutal-bg: #111210; /* Légèrement décollé du fond pour la structure */
+    --ticker-duration: 35s;
   }
-  20% {
-    text-shadow: -4px 0 var(--glitch-red), 4px 0 var(--glitch-blue), 0 0 20px var(--neon-core);
-    transform: scale(1.1) skewX(-15deg);
-  }
-  21% {
-    text-shadow: 0 0 10px var(--neon-core);
-    transform: scale(1.1) skewX(0deg);
-  }
-  40% {
-    text-shadow: 3px -2px var(--glitch-red), -3px 2px var(--glitch-blue), 0 0 15px white;
-  }
-  60% {
-    text-shadow: -2px 2px var(--glitch-blue), 2px -2px var(--glitch-red);
-    transform: scale(1.12) skewX(10deg);
-  }
-  61% {
-    text-shadow: 0 0 10px var(--neon-core);
-    transform: scale(1.1) skewX(0deg);
-  }
-  80% {
-    text-shadow: 5px 0 var(--glitch-red), -5px 0 var(--glitch-blue);
-    opacity: 0.8;
-  }
-  100% {
-    text-shadow: 0 0 10px var(--neon-core);
-    opacity: 1;
-  }
-}
 
-/* 4. Curseur au repos */
-@keyframes cursor-idle {
-  0%, 100% { opacity: 0.1; }
-  50% { opacity: 0.4; box-shadow: 0 0 5px var(--neon-core); }
-}
-
-/* 5. Curseur en surcharge électrique */
-@keyframes cursor-overload {
-  0%   { opacity: 1; transform: scale(1.4) translateY(-2px) skewX(0); }
-  25%  { opacity: 0.4; transform: scale(1.2) translateY(0px) skewX(-20deg); }
-  50%  { opacity: 0.9; transform: scale(1.5) translateY(-3px) skewX(20deg); }
-  75%  { opacity: 0.2; transform: scale(1.1) translateY(1px) skewX(0); }
-  100% { opacity: 1; transform: scale(1.4) translateY(-2px) skewX(0); }
-}
-
-/* Mode safe pour l'accessibilité */
-@media (prefers-reduced-motion: reduce) {
-  .ticker::before, .ticker-inner, .ticker-inner > span > span:hover, .ticker-inner > span > span::after {
-    animation: none !important;
+  .ticker {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: 2.5rem 0;
+    background-color: var(--brutal-bg);
+    
+    /* Néo-brutalisme : Lignes de structure franches, aucun effet de flou */
+    border-top: 1px solid var(--silver-dim);
+    border-bottom: 1px solid var(--silver-dim);
+    
+    /* Motif Old-School : Grille de points d'imprimante matricielle très discrète */
+    background-image: radial-gradient(var(--silver-dim) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: center;
+    background-blend-mode: overlay;
+    opacity: 0.95;
   }
-}
+
+  /* Masque de fondu ultra-doux sur les extrémités */
+  .ticker::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(90deg, var(--ink) 0%, transparent 15%, transparent 85%, var(--ink) 100%);
+    pointer-events: none;
+  }
+
+  .ticker-inner {
+    display: flex;
+    width: max-content;
+    
+    /* L'animation utilise un timing complexe pour faire varier la vitesse */
+    animation: engine-scroll var(--ticker-duration) infinite;
+    will-change: transform;
+  }
+
+  /* Pause nette au survol du bloc entier */
+  .ticker:hover .ticker-inner {
+    animation-play-state: paused;
+  }
+
+  .ticker-inner > span {
+    display: flex;
+    gap: 4rem;
+    padding-right: 4rem;
+  }
+
+  .ticker-inner > span > span {
+    position: relative;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--silver-mid);
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+    white-space: nowrap;
+    cursor: crosshair;
+    
+    /* La fluidité : Une tension élastique très spécifique (Custom Cubic Bezier) */
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* ── INTERACTION NEO-BRUTALIST : L'EXTRUSION ── */
+  .ticker-inner > span > span:hover {
+    color: var(--paper); /* Contraste maximal */
+    transform: translate(-5px, -5px); /* Élévation physique */
+    
+    /* L'ombre n'est pas un blur, c'est une extrusion isométrique solide */
+    text-shadow: 
+      1px 1px 0 var(--kaki-accent),
+      2px 2px 0 var(--kaki-accent),
+      3px 3px 0 var(--kaki-accent),
+      4px 4px 0 var(--kaki-accent),
+      5px 5px 0 var(--kaki-accent);
+  }
+
+  /* ── LE SÉPARATEUR : Le "Prompt" Old-School ── */
+  .ticker-inner > span > span::after {
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 2px;
+    background-color: var(--silver-dim);
+    transform: translateY(4px);
+    
+    /* Un clignotement doux (ease-in-out) plutôt qu'un clignotement sec (step) */
+    animation: smooth-prompt 2s ease-in-out infinite;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ticker-inner > span > span:hover::after {
+    background-color: var(--kaki-accent);
+    transform: translateY(4px) scaleX(1.5);
+    animation: none; /* Le survol fige l'attention */
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     KEYFRAMES D'EXPERTISE TECHNIQUE
+  ═══════════════════════════════════════════════════════ */
+
+  /* Variations de vitesse dans le défilement */
+  /* Au lieu d'une ligne droite, la courbe d'animation accélère et freine de manière asymétrique */
+  @keyframes engine-scroll {
+    0% { 
+      transform: translateX(0); 
+      /* Accélération très douce au départ */
+      animation-timing-function: cubic-bezier(0.3, 0.1, 0.3, 1); 
+    }
+    30% { 
+      transform: translateX(-18%); 
+      /* Vitesse de croisière linéaire */
+      animation-timing-function: linear; 
+    }
+    70% { 
+      transform: translateX(-35%); 
+      /* Ralentissement fluide puis relance */
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); 
+    }
+    100% { 
+      /* Se termine exactement à -50% pour la boucle parfaite avec vos 2 spans */
+      transform: translateX(-50%); 
+    }
+  }
+
+  /* Clignotement "fade" rappelant les vieux moniteurs à phosphore */
+  @keyframes smooth-prompt {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0.9; box-shadow: 0 0 4px rgba(142, 154, 120, 0.2); }
+  }
 
   /* ── ABOUT ── */
   .about-grid { display:grid; grid-template-columns:3fr 2fr; gap:4rem; align-items:start; }
