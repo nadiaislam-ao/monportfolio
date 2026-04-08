@@ -125,57 +125,46 @@
   .section-title::after { content:''; display:block; width:2.5rem; height:1px; margin-top:.6rem; background:linear-gradient(90deg,var(--silver),transparent); opacity:.5; }
 
 /* ──────────────────────────────────────────────────────────────────
-     TICKER : NEO-BRUTALISM 200% CSS (ZERO JS / ZERO HTML EDIT)
+     TICKER : TACTILE SAGE & BEIGE (ORGANIC EDITORIAL)
      ────────────────────────────────────────────────────────────────── */
 
   .ticker {
-    /* Palette Sage Green (Kaki Industriel) & Encres */
-    --sage-light: #a3b18a;
-    --sage-base:  #8e9a78;
-    --sage-dark:  #588157;
-    --sage-void:  #344e41;
-    --brutal-bg:  #0d0d0b; /* Aligné sur votre --ink */
+    /* Palette Botanique & Papier (Sage Green + Beige) */
+    --paper-raw:   #f4f2ec; /* Beige fond de toile */
+    --paper-shade: #e8e4d9; /* Beige ombré */
+    --sage-ink:    #2b3326; /* Kaki très sombre (Encre) */
+    --sage-base:   #5c6b51; /* Kaki franc */
+    --sage-soft:   #8b9c7d; /* Sage pastel */
+    --sage-wash:   #c9d4c0; /* Vert d'eau / Kaki très clair */
 
     position: relative;
     width: 100%;
     overflow: hidden;
-    padding: 3.5rem 0;
-    background-color: var(--brutal-bg);
-    
-    /* Structure Brutaliste : Lignes épaisses, pas de dégradés mous */
-    border-top: 2px solid var(--sage-dark);
-    border-bottom: 2px solid var(--sage-dark);
-    
-    /* Motif Old-School : Blueprint pointillé */
-    background-image: radial-gradient(var(--sage-void) 1.5px, transparent 1.5px);
-    background-size: 24px 24px;
-    background-position: center;
+    padding: 3rem 0;
+    background-color: var(--paper-raw);
+
+    /* Lignes de structure organiques, très douces */
+    border-top: 1px solid var(--sage-wash);
+    border-bottom: 1px solid var(--sage-wash);
+
+    /* TEXTURE 1 : Grain de papier statique (Micro-pointillé) */
+    background-image: radial-gradient(var(--sage-wash) 0.5px, transparent 0.5px);
+    background-size: 14px 14px;
+    box-shadow: inset 0 0 60px rgba(92, 107, 81, 0.05);
   }
 
-  /* La ligne de scan (CRT Monitor) qui traverse l'écran en permanence */
+  /* TEXTURE 2 : Trame de lin vivante (Micro-animation fluide) */
   .ticker::before {
     content: '';
     position: absolute;
     inset: 0;
-    z-index: 10;
-    background: linear-gradient(to bottom, 
-      transparent 0%, 
-      rgba(163, 177, 138, 0.03) 50%, 
-      rgba(88, 129, 87, 0.1) 100%
-    );
-    background-size: 100% 8px;
-    animation: crt-scan 8s linear infinite;
-    pointer-events: none;
-    mix-blend-mode: overlay;
-  }
-
-  /* Fondu très net sur les bords pour l'entrée/sortie des mots */
-  .ticker::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 5;
-    background: linear-gradient(90deg, var(--brutal-bg) 0%, transparent 12%, transparent 88%, var(--brutal-bg) 100%);
+    z-index: 1;
+    opacity: 0.6;
+    background-image: 
+      repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(139, 156, 125, 0.03) 2px, rgba(139, 156, 125, 0.03) 4px),
+      repeating-linear-gradient(-45deg, transparent, transparent 2px, rgba(139, 156, 125, 0.03) 2px, rgba(139, 156, 125, 0.03) 4px);
+    mix-blend-mode: multiply;
+    animation: organic-weave 20s ease-in-out infinite alternate;
     pointer-events: none;
   }
 
@@ -184,122 +173,119 @@
     width: max-content;
     position: relative;
     z-index: 3;
-    animation: heavy-machinery-scroll 45s linear infinite;
+    animation: smooth-scroll 45s linear infinite;
     will-change: transform;
+
+    /* TEXTURE 3 : L'effacement par "Masque CSS" (CSS Masking)
+       Contrairement à un dégradé de couleur par dessus, cela rend le texte 
+       transparent sur les bords, laissant apparaître le grain du papier au travers. */
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 15%, black 85%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, black 15%, black 85%, transparent 100%);
   }
 
-  /* ── LA SYMBIOSE CSS (SANS JS) VIA :has() ── */
-  /* Si le ticker contient un mot survolé, on met le ticker-inner en pause */
+  /* LA SYMBIOSE ÉLÉGANTE (Profondeur de champ dynamique) */
   .ticker:hover .ticker-inner {
     animation-play-state: paused;
   }
 
-  /* Si un mot est survolé, TOUS LES AUTRES mots non-survolés s'effacent en arrière-plan */
+  /* Zéro JS : Si on survole un mot, les autres reculent dans le flou */
   .ticker:has(span > span:hover) .ticker-inner > span > span:not(:hover) {
-    opacity: 0.15;
-    transform: scale(0.95) translateY(5px);
-    filter: grayscale(100%) blur(1px);
-    -webkit-text-stroke: 1px var(--sage-void); /* Ils deviennent fantomatiques */
+    color: var(--sage-wash);
+    transform: scale(0.98);
+    filter: blur(0.5px);
+    opacity: 0.6;
   }
 
-  /* Structure des groupes de mots */
   .ticker-inner > span {
     display: flex;
     gap: 5rem;
     padding-right: 5rem;
   }
 
-  /* ── TYPOGRAPHIE WIREFRAME (L'état par défaut) ── */
+  /* TEXTURE 4 : L'encre sur le papier */
   .ticker-inner > span > span {
     position: relative;
     font-family: var(--mono);
-    font-size: 1.1rem;
-    font-weight: bold;
-    letter-spacing: 0.15em;
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    
-    /* Effet "Plan de construction" : texte transparent, contours visibles */
-    color: transparent;
-    -webkit-text-stroke: 1px var(--sage-dark);
-    
+    color: var(--sage-soft);
     display: flex;
     align-items: center;
-    gap: 4rem;
+    gap: 5rem;
     white-space: nowrap;
-    cursor: crosshair;
+    cursor: pointer;
     
-    /* Physique Elastique Lourde */
-    transition: all 0.4s cubic-bezier(0.25, 1.5, 0.5, 1);
+    /* Transition hyper fluide, amortie comme une suspension */
+    transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
-  /* ── L'EXTRUSION ISOMÉTRIQUE MASSIVE (Au survol) ── */
+  /* TEXTURE 5 : Le Letterpress (Débossage physique) */
   .ticker-inner > span > span:hover {
-    /* Le texte se remplit de matière */
-    color: var(--sage-light);
-    -webkit-text-stroke: 0px;
+    color: var(--sage-ink);
+    letter-spacing: 0.3em;
+    transform: scale(1.02);
     
-    /* Il se soulève violemment vers la gauche et le haut */
-    transform: translate(-6px, -6px) scale(1.05);
-    letter-spacing: 0.25em;
-    
-    /* L'Extrusion Solide (Pas de flou, 100% Néo-brutaliste) */
+    /* Ombre interne simulée (Lumière blanche en bas, Ombre kaki en haut) 
+       Cela donne l'impression que le mot est pressé/gravé dans le papier */
     text-shadow: 
-      1px 1px 0 var(--sage-base),
-      2px 2px 0 var(--sage-base),
-      3px 3px 0 var(--sage-dark),
-      4px 4px 0 var(--sage-dark),
-      5px 5px 0 var(--sage-void),
-      6px 6px 0 var(--sage-void),
-      7px 7px 0 var(--sage-void),
-      12px 12px 15px rgba(0,0,0,0.8); /* Ombre portée sous le bloc */
+      0px 1px 0px rgba(255, 255, 255, 0.9), 
+      0px -1px 0px rgba(43, 51, 38, 0.15);
   }
 
-  /* ── LE CURSEUR OLD SCHOOL (Sans toucher au HTML) ── */
+  /* LE SÉPARATEUR : La perle organique respirante */
   .ticker-inner > span > span::after {
-    content: '_'; /* Curseur terminal rétro */
-    color: var(--sage-dark);
-    -webkit-text-stroke: 0px;
-    font-size: 1.2rem;
-    transform: translateY(-2px);
-    margin-left: 1rem;
+    content: '●'; /* Un point parfaitement rond au lieu du losange */
+    font-size: 0.45rem;
+    color: var(--sage-wash);
+    margin-left: 2rem; 
     
-    /* Clignotement sec (step-end) */
-    animation: terminal-blink 1s step-end infinite;
-    transition: all 0.3s ease;
+    /* Micro-animation de respiration infinie */
+    animation: botanic-breath 4s ease-in-out infinite;
+    transition: all 0.4s ease;
   }
 
   .ticker-inner > span > span:hover::after {
-    content: '█'; /* Devient un bloc solide actif */
-    color: var(--sage-light);
-    animation: fast-process 0.2s steps(2) infinite;
+    color: var(--sage-base);
+    animation-play-state: paused;
+    transform: scale(1.2);
   }
 
   /* ═══════════════════════════════════════════════════════
-     KEYFRAMES INGÉNIERIE CSS
+     KEYFRAMES ORGANIQUES
   ═══════════════════════════════════════════════════════ */
 
-  /* Le défilement infini */
-  @keyframes heavy-machinery-scroll {
+  @keyframes smooth-scroll {
     0%   { transform: translateX(0); }
     100% { transform: translateX(-50%); }
   }
 
-  /* Le balayage du moniteur cathodique */
-  @keyframes crt-scan {
-    0%   { transform: translateY(-100%); }
-    100% { transform: translateY(100vh); }
+  /* Fait glisser doucement la trame de lin en arrière-plan */
+  @keyframes organic-weave {
+    0% {
+      background-position: 0px 0px, 0px 0px;
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 0.7; /* Légère variation de luminosité */
+    }
+    100% {
+      background-position: 10px 10px, -10px -10px;
+      opacity: 0.5;
+    }
   }
 
-  /* Le clignotement passif */
-  @keyframes terminal-blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-  }
-
-  /* L'activité intense du bloc au survol */
-  @keyframes fast-process {
-    0% { transform: scale(1) translateY(-2px); opacity: 1; }
-    50% { transform: scale(0.8) translateY(-2px); opacity: 0.8; }
+  /* Fait respirer les points de séparation */
+  @keyframes botanic-breath {
+    0%, 100% { 
+      transform: scale(1); 
+      opacity: 0.5;
+    }
+    50% { 
+      transform: scale(1.3); 
+      opacity: 1;
+      filter: drop-shadow(0 0 2px rgba(201, 212, 192, 0.8));
+    }
   }
 
   /* ── ABOUT ── */
