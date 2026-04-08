@@ -125,147 +125,181 @@
   .section-title::after { content:''; display:block; width:2.5rem; height:1px; margin-top:.6rem; background:linear-gradient(90deg,var(--silver),transparent); opacity:.5; }
 
 /* ──────────────────────────────────────────────────────────────────
-     TICKER : NEO-BRUTALISM & SMOOTH ENGINEERING
+     TICKER : NEO-BRUTALISM 200% CSS (ZERO JS / ZERO HTML EDIT)
      ────────────────────────────────────────────────────────────────── */
 
-  :root {
-    --kaki-accent: #8e9a78; /* Vert Kaki industriel / Sage Green */
-    --brutal-bg: #111210; /* Légèrement décollé du fond pour la structure */
-    --ticker-duration: 35s;
-  }
-
   .ticker {
+    /* Palette Sage Green (Kaki Industriel) & Encres */
+    --sage-light: #a3b18a;
+    --sage-base:  #8e9a78;
+    --sage-dark:  #588157;
+    --sage-void:  #344e41;
+    --brutal-bg:  #0d0d0b; /* Aligné sur votre --ink */
+
     position: relative;
     width: 100%;
     overflow: hidden;
-    padding: 2.5rem 0;
+    padding: 3.5rem 0;
     background-color: var(--brutal-bg);
     
-    /* Néo-brutalisme : Lignes de structure franches, aucun effet de flou */
-    border-top: 1px solid var(--silver-dim);
-    border-bottom: 1px solid var(--silver-dim);
+    /* Structure Brutaliste : Lignes épaisses, pas de dégradés mous */
+    border-top: 2px solid var(--sage-dark);
+    border-bottom: 2px solid var(--sage-dark);
     
-    /* Motif Old-School : Grille de points d'imprimante matricielle très discrète */
-    background-image: radial-gradient(var(--silver-dim) 1px, transparent 1px);
+    /* Motif Old-School : Blueprint pointillé */
+    background-image: radial-gradient(var(--sage-void) 1.5px, transparent 1.5px);
     background-size: 24px 24px;
     background-position: center;
-    background-blend-mode: overlay;
-    opacity: 0.95;
   }
 
-  /* Masque de fondu ultra-doux sur les extrémités */
+  /* La ligne de scan (CRT Monitor) qui traverse l'écran en permanence */
   .ticker::before {
     content: '';
     position: absolute;
     inset: 0;
-    z-index: 2;
-    background: linear-gradient(90deg, var(--ink) 0%, transparent 15%, transparent 85%, var(--ink) 100%);
+    z-index: 10;
+    background: linear-gradient(to bottom, 
+      transparent 0%, 
+      rgba(163, 177, 138, 0.03) 50%, 
+      rgba(88, 129, 87, 0.1) 100%
+    );
+    background-size: 100% 8px;
+    animation: crt-scan 8s linear infinite;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+
+  /* Fondu très net sur les bords pour l'entrée/sortie des mots */
+  .ticker::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    background: linear-gradient(90deg, var(--brutal-bg) 0%, transparent 12%, transparent 88%, var(--brutal-bg) 100%);
     pointer-events: none;
   }
 
   .ticker-inner {
     display: flex;
     width: max-content;
-    
-    /* L'animation utilise un timing complexe pour faire varier la vitesse */
-    animation: engine-scroll var(--ticker-duration) infinite;
+    position: relative;
+    z-index: 3;
+    animation: heavy-machinery-scroll 45s linear infinite;
     will-change: transform;
   }
 
-  /* Pause nette au survol du bloc entier */
+  /* ── LA SYMBIOSE CSS (SANS JS) VIA :has() ── */
+  /* Si le ticker contient un mot survolé, on met le ticker-inner en pause */
   .ticker:hover .ticker-inner {
     animation-play-state: paused;
   }
 
-  .ticker-inner > span {
-    display: flex;
-    gap: 4rem;
-    padding-right: 4rem;
+  /* Si un mot est survolé, TOUS LES AUTRES mots non-survolés s'effacent en arrière-plan */
+  .ticker:has(span > span:hover) .ticker-inner > span > span:not(:hover) {
+    opacity: 0.15;
+    transform: scale(0.95) translateY(5px);
+    filter: grayscale(100%) blur(1px);
+    -webkit-text-stroke: 1px var(--sage-void); /* Ils deviennent fantomatiques */
   }
 
+  /* Structure des groupes de mots */
+  .ticker-inner > span {
+    display: flex;
+    gap: 5rem;
+    padding-right: 5rem;
+  }
+
+  /* ── TYPOGRAPHIE WIREFRAME (L'état par défaut) ── */
   .ticker-inner > span > span {
     position: relative;
     font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.25em;
+    font-size: 1.1rem;
+    font-weight: bold;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--silver-mid);
+    
+    /* Effet "Plan de construction" : texte transparent, contours visibles */
+    color: transparent;
+    -webkit-text-stroke: 1px var(--sage-dark);
+    
     display: flex;
     align-items: center;
     gap: 4rem;
     white-space: nowrap;
     cursor: crosshair;
     
-    /* La fluidité : Une tension élastique très spécifique (Custom Cubic Bezier) */
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Physique Elastique Lourde */
+    transition: all 0.4s cubic-bezier(0.25, 1.5, 0.5, 1);
   }
 
-  /* ── INTERACTION NEO-BRUTALIST : L'EXTRUSION ── */
+  /* ── L'EXTRUSION ISOMÉTRIQUE MASSIVE (Au survol) ── */
   .ticker-inner > span > span:hover {
-    color: var(--paper); /* Contraste maximal */
-    transform: translate(-5px, -5px); /* Élévation physique */
+    /* Le texte se remplit de matière */
+    color: var(--sage-light);
+    -webkit-text-stroke: 0px;
     
-    /* L'ombre n'est pas un blur, c'est une extrusion isométrique solide */
+    /* Il se soulève violemment vers la gauche et le haut */
+    transform: translate(-6px, -6px) scale(1.05);
+    letter-spacing: 0.25em;
+    
+    /* L'Extrusion Solide (Pas de flou, 100% Néo-brutaliste) */
     text-shadow: 
-      1px 1px 0 var(--kaki-accent),
-      2px 2px 0 var(--kaki-accent),
-      3px 3px 0 var(--kaki-accent),
-      4px 4px 0 var(--kaki-accent),
-      5px 5px 0 var(--kaki-accent);
+      1px 1px 0 var(--sage-base),
+      2px 2px 0 var(--sage-base),
+      3px 3px 0 var(--sage-dark),
+      4px 4px 0 var(--sage-dark),
+      5px 5px 0 var(--sage-void),
+      6px 6px 0 var(--sage-void),
+      7px 7px 0 var(--sage-void),
+      12px 12px 15px rgba(0,0,0,0.8); /* Ombre portée sous le bloc */
   }
 
-  /* ── LE SÉPARATEUR : Le "Prompt" Old-School ── */
+  /* ── LE CURSEUR OLD SCHOOL (Sans toucher au HTML) ── */
   .ticker-inner > span > span::after {
-    content: '';
-    display: inline-block;
-    width: 14px;
-    height: 2px;
-    background-color: var(--silver-dim);
-    transform: translateY(4px);
+    content: '_'; /* Curseur terminal rétro */
+    color: var(--sage-dark);
+    -webkit-text-stroke: 0px;
+    font-size: 1.2rem;
+    transform: translateY(-2px);
+    margin-left: 1rem;
     
-    /* Un clignotement doux (ease-in-out) plutôt qu'un clignotement sec (step) */
-    animation: smooth-prompt 2s ease-in-out infinite;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Clignotement sec (step-end) */
+    animation: terminal-blink 1s step-end infinite;
+    transition: all 0.3s ease;
   }
 
   .ticker-inner > span > span:hover::after {
-    background-color: var(--kaki-accent);
-    transform: translateY(4px) scaleX(1.5);
-    animation: none; /* Le survol fige l'attention */
+    content: '█'; /* Devient un bloc solide actif */
+    color: var(--sage-light);
+    animation: fast-process 0.2s steps(2) infinite;
   }
 
   /* ═══════════════════════════════════════════════════════
-     KEYFRAMES D'EXPERTISE TECHNIQUE
+     KEYFRAMES INGÉNIERIE CSS
   ═══════════════════════════════════════════════════════ */
 
-  /* Variations de vitesse dans le défilement */
-  /* Au lieu d'une ligne droite, la courbe d'animation accélère et freine de manière asymétrique */
-  @keyframes engine-scroll {
-    0% { 
-      transform: translateX(0); 
-      /* Accélération très douce au départ */
-      animation-timing-function: cubic-bezier(0.3, 0.1, 0.3, 1); 
-    }
-    30% { 
-      transform: translateX(-18%); 
-      /* Vitesse de croisière linéaire */
-      animation-timing-function: linear; 
-    }
-    70% { 
-      transform: translateX(-35%); 
-      /* Ralentissement fluide puis relance */
-      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); 
-    }
-    100% { 
-      /* Se termine exactement à -50% pour la boucle parfaite avec vos 2 spans */
-      transform: translateX(-50%); 
-    }
+  /* Le défilement infini */
+  @keyframes heavy-machinery-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
   }
 
-  /* Clignotement "fade" rappelant les vieux moniteurs à phosphore */
-  @keyframes smooth-prompt {
-    0%, 100% { opacity: 0.15; }
-    50% { opacity: 0.9; box-shadow: 0 0 4px rgba(142, 154, 120, 0.2); }
+  /* Le balayage du moniteur cathodique */
+  @keyframes crt-scan {
+    0%   { transform: translateY(-100%); }
+    100% { transform: translateY(100vh); }
+  }
+
+  /* Le clignotement passif */
+  @keyframes terminal-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* L'activité intense du bloc au survol */
+  @keyframes fast-process {
+    0% { transform: scale(1) translateY(-2px); opacity: 1; }
+    50% { transform: scale(0.8) translateY(-2px); opacity: 0.8; }
   }
 
   /* ── ABOUT ── */
